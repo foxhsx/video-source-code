@@ -343,3 +343,26 @@ if (process.env.TARO_ENV === 'weapp') {
 ### 关于 `taro`样式加载问题
 
 当一个文件目录里有多个文件，且这些文件都引用一个css时，打包小程序并发布以后，会有加载不上样式的问题，这个时候，我们需要把文件做模块化处理，每一个文件对应一个文件目录，并创建对应的css样式，不要几个文件都引用相同的css。一个功能模块对应一个文件夹，里面是对应的jsx文件和css文件。这样再次打包发布后，就好了。——如果都使用同一个文件，那么在打包以后，会在项目最外层生成一个common.wxss，这个时候那些文件都会引这个css文件，在开发环境下是OK的，但是发布到线上以后就有问题了。
+
+自定义组件的样式，在被引用以后，父页面是修改不了的，除非在自定义组件里将组件构造器中的`options.addGlobalClass`字段设置为`true`。
+
+```javascript
+export default class CustomComp extends Component {
+  static options = {
+    addGlobalClass: true
+  }
+
+  render () {
+    return <View className="red-text">这段文本的颜色由组件外的 class 决定</View>
+  }
+}
+```
+
+组件外的样式定义
+
+```javascript
+.red-text {
+  color: red;
+}
+```
+
