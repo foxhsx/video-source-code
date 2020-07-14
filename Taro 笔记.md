@@ -390,3 +390,45 @@ prevState.liststate = resArr.length > 0 ? resArr : arr
 ### 企业微信授权登录
 
 企业微信授权登录，不需要在前端进行
+
+### H5 适配
+
+1. h5 下 router 的 mode 为 browser 模式，且项目配置h5.publicPath 为 '/wx'时，启动项目发版后会报错：
+
+```sh
+Can not find proper registered route for '/wx'
+```
+
+那么我们将 mode 改回为 hash 即可（默认即为 hash）
+
+2. this.$router.params 获取不到
+
+   可以将版本升直高版本（稳定版本），当然，与此同时对应的依赖也需要升级至相对应的版本。此项目，我们升级至2.2.8. 之后就是3+了。
+
+3. 由于渲染顺序的原因，在 h5 端，render 函数先执行，里面的变量有的还没有赋值就已经被调用，此时就会报错，这个时候我们需要加上一些为空判断来避免出错。
+
+4. Navigator 组件是不兼容 h5 的，所以要做多端应用时，避开这个坑点。
+
+5. Taro 并没有集成**企业微信**的扫码功能，所以如果要适配企业微信扫一扫，还需要接入企业微信的JS-SDK，使用`wx.scanQRCode()`方法。
+
+6. 因为 Taro 打包成 h5 以后，里面的标签会有所变化，所以我们在写css样式的时候，最好是都用 class，而不是直接去用标签名。否则，样式会在 h5 端应用不上。
+
+7. h5 端仅在微信公众号中支持 API getLocation ，所以这里也无法使用这个API了，还是得用企业微信里的API来调。`wx.getLocation`
+
+8. Radio 组件在 h5 下不能点击选中：是因为在 h5 编译后，样式导致的，input 框被`position:absolute`到了别的地方，导致我们一直点不中 input，这里我们可以使用`Label`组件来实现 radio 的点击。注意这里的写法：
+
+   ```javascript
+   <RadioGroup>
+       <Label className='example-body__label' for='1' key='1'>
+           <Radio value='USA'>USA</Radio>
+   	</Label>
+   	<Label className='example-body__label' for='2' key='2'>
+       	<Radio value='CHN' checked>CHN</Radio>
+   	</Label>
+   </RadioGroup>
+   ```
+
+   少一个都会在打包 h5 的时候，导致点击 radio 标签不起作用。
+
+9. 
+
