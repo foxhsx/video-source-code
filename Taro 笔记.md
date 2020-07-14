@@ -366,3 +366,27 @@ export default class CustomComp extends Component {
 }
 ```
 
+### 使用 reduce 进行数组去重：
+
+```javascript
+// 去重，产品和赠品一样时，总和起来进行计算
+
+arr.reduce((item, next) => {
+    if (!hash[next.productCode]) {
+        hash[next.productCode] = true
+        if (item && item.productCode === next.productCode) {
+            next.productNum = item.productNum + next.productNum
+        }
+        resArr.push(next)
+    }
+})
+prevState.liststate = resArr.length > 0 ? resArr : arr
+```
+
+### reLaunch
+
+不管在Taro还是小程序里使用 reLaunch API 都会关闭所有页面，打开到应用内的某个页面，这样的话，在安卓上按下物理返回键，就会有退出小程序的BUG出现。
+
+### 企业微信授权登录
+
+企业微信授权登录，不需要在前端进行
