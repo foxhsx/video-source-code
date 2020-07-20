@@ -430,5 +430,47 @@ Can not find proper registered route for '/wx'
 
    少一个都会在打包 h5 的时候，导致点击 radio 标签不起作用。
 
-9. 
+9. 在 react 项目中引入 微信JS-SDK（https://juejin.im/post/5b657b75e51d45339e7ef82c）。在
 
+   ```javascript
+   npm i weixin-js-sdk
+   ```
+
+   后，发版时还得配置一些东西，否则，调用sdk时是不成功的。
+
+   在需要使用扫码的页面引入JS-SDK并调用后台给的接口，动态传入 URL 来获取对应的签名，这里需要注意的是 URL 需要在 `encodeURIComponent`后传入，否则签名会出错。
+
+   ```javascript
+   const url = encodeURIComponent(window.location.href.split('#')[0])
+         qywechat(url).then(res => {
+           let data = res.data
+           wx.config({
+             beta: true,// 必须这么写，否则wx.invoke调用形式的jsapi会有问题
+             debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+             appId: 'wxaeecca9380ad4574', // 必填，企业微信的corpID
+             timestamp: data.timestamp, // 必填，生成签名的时间戳
+             nonceStr: data.noncestr, // 必填，生成签名的随机串
+             signature: data.signature,// 必填，签名，见 附录-JS-SDK使用权限签名算法
+             jsApiList: ['scanQRCode'] // 必填，需要使用的JS接口列表，凡是要调用的接口都需要传进来
+           });
+   
+           wx.ready(function () {
+             wx.checkJsApi({
+               jsApiList: ['scanQRCode'], // 需要检测的JS接口列表，所有JS接口列表见附录2,
+               success: function(res) {
+                   // 以键值对的形式返回，可用的api值true，不可用为false
+                   console.log(res)
+                   // 如：{"checkResult":{"chooseImage":true},"errMsg":"checkJsApi:ok"}
+               }
+             });
+           })
+         })
+   ```
+
+   调用定位API的时也是一样，需要在jsApiList 里去添加 `getLocation`的API，然后当获取到经纬度以后，不再去调用小程序的定位API，而是调用腾讯位置服务里的 `WebService API`——逆地址解析：
+   
+   ```javascript
+   https://apis.map.qq.com/ws/geocoder/v1/?location=XXX&key=你的秘钥
+   ```
+   
+   
