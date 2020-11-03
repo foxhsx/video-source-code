@@ -2325,3 +2325,66 @@ s.includes('Hello', 6)  // false
 
 ### 6. 实例方法：repeat()
 
+`repeat`方法返回一个新字符串，表示将原字符串重复`n`次。
+
+```javascript
+'x'.repeat(3) // "xxx"
+'hello'.repeat(2) // 'hellohello'
+'na'.repeat(0) // ''
+```
+
+参数如果是小数，会被取整。
+
+```javascript
+'na'.repeat(2.9)  // 'nana'
+```
+
+如果`repeat`的参数是负数或者`infinity`，会报错。
+
+```javascript
+'na'.repeat(Infinity)
+// RangeError
+'na'.repeat(-1)
+// RangeError
+```
+
+但是，如果参数是 0 到-1 之间的小数，则等同于 0，这是因为会先进行取整运算。0 到-1 之间的小数，取整以后等于`-0`，`repeat`视同为 0。
+
+```javascript
+'na'.repeat(-0.9) // ""
+```
+
+参数`NaN`等同于 0。
+
+```javascript
+'na'.repeat(NaN) // ""
+```
+
+如果`repeat`的参数是字符串，则会先转换成数字。
+
+```javascript
+'na'.repeat('na') // ""
+'na'.repeat('3') // "nanana"
+```
+
+### 7. 实例方法：padStart()，padEnd()
+
+ES2017 引入了字符串补全长度的功能。如果某个字符串不够指定长度，会在头部或尾部补全。`padStart()`用于头部补全，`padEnd()`用于尾部补全。
+
+```javascript
+'x'.padStart(5, 'ab') // 'ababx'
+'x'.padStart(4, 'ab') // 'abax'
+
+'x'.padEnd(5, 'ab') // 'xabab'
+'x'.padEnd(4, 'ab') // 'xaba'
+```
+
+上面代码中，`padStart()`和`padEnd()`一共接受两个参数，第一个参数是字符串补全生效的最大长度，第二个参数是用来补全的字符串。
+
+如果原字符串的长度，等于或大于最大长度，则字符串补全不生效，返回原字符串。
+
+```javascript
+'xxx'.padStart(2, 'ab') // 'xxx'
+'xxx'.padEnd(2, 'ab') // 'xxx'
+```
+
