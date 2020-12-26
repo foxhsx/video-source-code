@@ -36,7 +36,9 @@ module.exports = {
                     esModule: false,
                     // 给图片进行重命名——hash长度限制10位
                     // ext 取原来的扩展名
-                    name: '[hash:10].[ext]'
+                    name: '[hash:10].[ext]',
+                    // 输出到指定目录里
+                    outputPath: 'imgs'
                 }
             }
         ]

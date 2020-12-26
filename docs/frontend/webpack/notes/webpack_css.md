@@ -32,7 +32,7 @@ module.exports = {
     // webpack 配置
     entry: './src/index.js',   // 入口起点
     output: {				  // 输出
-        filename: 'built.js',  // 输出文件名
+        filename: 'built.js',  // 输出文件名，如果要在输出到指定的目录中—— 'js/build.js'
         path: resolve(__dirname, 'build')  // __dirname是nodejs的变量，代表当前文件的目录绝对路径
     },
     module: {				  // loader 配置

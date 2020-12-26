@@ -18,3 +18,42 @@ categories:
 <img src="../imgs/cli_version.png" />
 
 简直一目了然有没有，我的天，重新安装 webpack-cli，开搞！
+
+那么webpack-dev-server的作用是为了什么呢？
+
+1. 在没有使用 webpack-dev-server 之前，每次修改源代码都需要重新执行一遍打包命令，效率很低
+2. 想在更改代码后即可在网页上看到最新的修改效果
+3. 避免每次修改源代码都要进行打包和手动刷新页面
+4. 帮助开发者自动打包
+5. 自动编译，自动打开浏览器，自动刷新浏览器
+
+::: tip
+
+**特点**：只会在内存中编译打包，不会有任何输出。
+
+:::
+
+我们称它为开发服务器，在配置文件中是这样的：
+
+```javascript
+module.exports = {
+    ...
+    devServer: {
+        // 运行项目目录，即构建后的目录
+        contentBase: resolve(__dirname, 'build'),
+        // 启动 gzip 压缩
+        compress: true,
+        port: 3000,
+        open: true
+    }
+    ...
+}
+```
+
+如果是本地安装，那么启动的时候输入：
+
+```sh
+npx webpack-dev-server
+```
+
+这样进程不会结束，会监听源码的改变而刷新页面。当退出服务后，进程结束，内存中的内容被删除。

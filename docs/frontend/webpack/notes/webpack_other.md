@@ -22,7 +22,9 @@ module.exports = {
                 exclude: /\.(css|js|html)$/,
                 loader: 'file-loader',
                 options: {
-                    name: '[hash:10].[ext]'
+                    name: '[hash:10].[ext]',
+                    // 输出到 media 目录下面
+                    outputPath: 'media'
                 }
             }
         ]

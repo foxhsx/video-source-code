@@ -1,4 +1,4 @@
-module.exports = [
+﻿module.exports = [
   {
     title: 'Webpack',
     collapsable: true,
@@ -12,6 +12,7 @@ module.exports = [
       '/frontend/webpack/notes/webpack_other',
       '/frontend/webpack/notes/webpack与dev',
       '/frontend/webpack/notes/hot_update',
+      '/frontend/webpack/notes/webpack_base_config'
     ]
   }
 ]
