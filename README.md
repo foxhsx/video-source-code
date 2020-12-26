@@ -4,27 +4,14 @@
 学习笔记
 
 #### 软件架构
-软件架构说明
+使用 vuepress 搭建的博客，主要用于记录日常学习笔记及在工作中遇到的问题和解决方法
 
 
 #### 安装教程
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
-
-#### 使用说明
-
-1.  xxxx
-2.  xxxx
-3.  xxxx
-
-#### 参与贡献
-
-1.  Fork 本仓库
-2.  新建 Feat_xxx 分支
-3.  提交代码
-4.  新建 Pull Request
+1.  npm i
+2.  cd note
+3.  npm run docs:dev
 
 
 #### 码云特技
