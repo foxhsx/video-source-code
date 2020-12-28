@@ -1,5 +1,5 @@
 ---
-title: webpack基础配置
+title: webpack基础配置总结
 date: 2020-12-26
 tags:
  - JavaScript

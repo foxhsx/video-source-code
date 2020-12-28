@@ -1,5 +1,5 @@
 ---
-title: webpack配置
+title: webpack快速配置
 date: 2020-12-12
 tags:
  - JavaScript

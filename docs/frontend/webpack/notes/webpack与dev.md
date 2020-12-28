@@ -19,6 +19,15 @@ categories:
 
 简直一目了然有没有，我的天，重新安装 webpack-cli，开搞！
 
+当然在webpack5中，我们安装了webpack-dev-server，版本为3.11.0。这里我们的启动配置就需要修改一下，不再是之前的 `webpack-dev-server`了，而是：
+
+```sh
+webpack serve
+
+# 要打开浏览器
+webpack serve --open Chrome.exe
+```
+
 那么webpack-dev-server的作用是为了什么呢？
 
 1. 在没有使用 webpack-dev-server 之前，每次修改源代码都需要重新执行一遍打包命令，效率很低
@@ -136,3 +145,6 @@ npx webpack-dev-server
 
   - 告诉 dev-server 监听 [`devServer.contentBase`]选项提供的文件。 默认情况下禁用。 启用后，文件更改将触发整个页面重新加载。
 
+**问题**：
+
+1. 当设置了 `output.publicPath` 后，liveReload 失效，为什么？
