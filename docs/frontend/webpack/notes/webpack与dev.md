@@ -44,7 +44,8 @@ module.exports = {
         // 启动 gzip 压缩
         compress: true,
         port: 3000,
-        open: true
+        open: true,
+        publicPath: ''
     }
     ...
 }
@@ -57,3 +58,81 @@ npx webpack-dev-server
 ```
 
 这样进程不会结束，会监听源码的改变而刷新页面。当退出服务后，进程结束，内存中的内容被删除。
+
+接下来我们大概会说下我们经常会用到的几个配置项：
+
+- contentBase
+
+  - 这个配置项的作用是告诉服务器内容的来源。仅在需要提供静态文件时才进行配置。建议使用绝对路径来进行设置。默认情况下，它将使用当前的工作目录来提供内容。如果要禁用 `contentBase`，只需要将其设置为 `false` 即可。
+
+- pubilcPath
+
+  - 默认值是`/`，表示devServer这个服务器在以`contentBase`为根路径的基础上，再以 `publicPath` 为对外开放的路径。主要是对外提供开发过程中 webpack 构建的文件。即**决定外部能以什么样的路径访问到构建文件**。
+  - 当然，webpack 构建的文件是在内存中的，而不是在电脑磁盘上，如果内存中找不到想要的文件时，devServer 会根据文件的路径尝试去电脑磁盘上去找。
+  - 如果开发时存在内存和 contentBase 下真实的磁盘路径中存在着同样文件名的文件，那么， devServer 会返回内存的那个。
+  - ***确保* `devServer.publicPath` *始终以正斜杠开头和结尾。***
+  - ***建议* `devServer.publicPath` *与* [`output.publicPath`](https://webpack.docschina.org/configuration/output/#outputpublicpath) *相同。***
+
+- compress
+
+- proxy
+
+  - 在项目中我们会经常用到 proxy 代理。默认是个 `Obejct`
+
+    ```javascript
+    module.exports = {
+      //...
+      devServer: {
+        proxy: {
+          '/api': 'http://localhost:3000'
+        }
+        /*
+        proxy: {
+          '/api': {
+          	target: 'http://localhost:3000',
+          	pathRewrite: {'^/api' : ''}
+          }
+        }
+        */
+      }
+    };
+    ```
+
+    如上代码块，使用后端在 `localhost:3000` 上，可以使用它来启用代理。现在，对 `/api/users` 的请求会将请求代理到 `http://localhost:3000/api/users`上去。而如果不希望传递`/api`，也可以选择重写路径。
+
+    需要注意的是，我们这里也要解决一下跨域问题——在 proxy 中，我们通过设置 `changeOrigin` 来解决跨域问题：
+
+    ::: tip
+
+    默认情况下，代理时会保留主机头的来源，也就是说请求头中的host仍然是浏览器发送过来的host，而不是我们设置的 target。当然这句话的意思并不是说我们在设置 `changeOrigin` 为 `true` 之后，就可以在控制台看到请求头的host是我们设置的 target了。而是说，你在前台看到的请求仍然是你主机头来源，但是实际上在后台进行**request.getHeader("Host")**打印时，可以清楚的看到请求头就是 target 配置对应的路径。
+
+    **我们可以理解为浏览器显示的是我们发送给代理服务器的请求，而后端接收到的是代码服务器处理后的请求。**
+
+    :::
+
+- open
+
+  - 项目启动后，自动打开浏览器（默认浏览器）。必须设置为 true，默认是 false。或者也可以直接设置要使用的浏览器名称，如`Google Chrome`
+
+- inline
+
+  - 在开发服务器的两种不同模式之间切换。默认情况下，开启**inline模式**。这表示如果bundle有更新，就可实时重新加载，并将构建消息展示在浏览器控制台中。
+
+- port
+
+  - 指定启动项目后的服务端口号，默认是 8080.
+
+- liveReload
+
+  - 默认情况下，检测到文件更改时，开发服务器将重新加载/属性页面。前提是**必须禁用`devServer.hot`选项或者必须启用`watchContentBase`选项才能使其生效**。
+
+- host
+
+  - 指定要使用的 `host`。默认是 `localhost`。当然，如果希望外部也能访问服务器，可将其设置为 `0.0.0.0`
+
+- hot
+
+- watchContentBase
+
+  - 告诉 dev-server 监听 [`devServer.contentBase`]选项提供的文件。 默认情况下禁用。 启用后，文件更改将触发整个页面重新加载。
+
