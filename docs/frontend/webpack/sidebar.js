@@ -12,7 +12,8 @@
       '/frontend/webpack/notes/webpack_other',
       '/frontend/webpack/notes/webpack与dev',
       '/frontend/webpack/notes/hot_update',
-      '/frontend/webpack/notes/webpack_base_config'
+      '/frontend/webpack/notes/webpack_base_config',
+      '/frontend/webpack/notes/webpack_sourceMap',
     ]
   }
 ]
