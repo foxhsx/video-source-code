@@ -1,5 +1,5 @@
 ---
-title: 开发技巧
+title: 网页开发技巧
 date: 2020-12-11
 tags:
  - JavaScript

@@ -172,3 +172,31 @@ if (options.devtool.includes("source-map")) {
 ## EvalSourceMapDevToolPlugin
 
 在 EvalSourceMapDevToolPlugin 插件传入的参数中，除了上面与预设相关的 filename、append、module、columns外，还有影响注释内容的 moduleFilenameTemplate 和 protocol，以及**影响处理范围的test、include、exclude**。这里我们的重心还是放在处理范围的参数，因为通常我们需要调试的是项目中的业务代码，而并非第三方依赖。因此在生成 source map 的时候如果可以排除第三方依赖的部分而只生成业务代码的 source map ，无疑能进一步提升构建的速度。
+
+```javascript
+// webpack.config.js 
+  ... 
+  //devtool: 'eval-source-map', 
+  devtool: false, 
+  plugins: [ 
+    new webpack.EvalSourceMapDevToolPlugin({ 
+      exclude: /node_modules/, 
+      module: true, 
+      columns: false 
+    }) 
+  ], 
+```
+
+首先，我们要将 devtool 设为 false，然后直接使用 EvalSourceMapDevToolPlugin，通过传入 module: true 和 column: false，达到和预设 eval-cheap-module-source-map 一样的质量，同时传入 exclude 参数，排除第三方依赖包的 source map 生产。
+
+再次运行会发现文件体积减小的同时，构建的速度相比上面表格中的速度提升了很多。
+
+使用预设：
+
+![](../imgs/sourceMap_preinstall.png)
+
+使用自定义设置：
+
+![](../imgs/sourceMap_custom.png)
+
+类似这样的优化可以帮助我们在一些大型项目中，通过自定义设置来获取比预设更好的开发体验。

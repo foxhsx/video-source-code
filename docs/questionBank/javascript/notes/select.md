@@ -1,5 +1,5 @@
 ---
-title: 其他
+title: JavaScript其他基础题综合
 date: 2020-12-9
 tags:
  - 题库

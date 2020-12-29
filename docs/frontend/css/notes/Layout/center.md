@@ -1,5 +1,5 @@
 ---
-title: 居中
+title: 常用的几种居中方式
 date: 2020-12-12
 tags:
  - CSS
