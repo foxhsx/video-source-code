@@ -14,6 +14,7 @@
       '/frontend/webpack/notes/hot_update',
       '/frontend/webpack/notes/webpack_base_config',
       '/frontend/webpack/notes/webpack_sourceMap',
+      '/frontend/webpack/notes/modularization_history',
     ]
   }
 ]
