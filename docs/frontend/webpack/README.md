@@ -40,4 +40,4 @@ Webpack 有五个核心概念：
     | development | 会将 process.env.NODE_ENV 的值设为 development。<br />启动 NamedChunksPlugin 和 NamedModulesPlugin。 | 能让代码本地调试运行的环境 |
     | production  | 会将 process.env.NODE_ENV 的值设为production。<br />启动FlagDependencyUsagePlugin, FlagincludedChunksPlugin, ModuleConcatenationPlugin, NoEmitOnErrorsPlugins, OccurrenceOrderPlugin, SideEffectsFlagPlugin 和 UglifyJsPlugin. | 能让代码优化上线运行的环境 |
 
-    
+除此之外，Webpack 还具备**代码拆分**的能力，它能够将应用中所有的模块按照我们的需要分块打包。这样一来，就不用担心全部代码打包到一起，产生单个文件过大，导致加载慢的问题。我们可以把应用初次加载所必需的模块打包到一起，其他的模块再单独打包，等到应用工作过程中实际需要用到某个模块，再异步加载该模块，实现**增量加载**，或者叫作**渐进式加载**，非常适合现代化的大型 Web 应用。

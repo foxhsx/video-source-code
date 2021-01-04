@@ -37,3 +37,36 @@ module.exports = {
 ```
 
 打包输出之后会发现，打包的目录里会多出来 html 文件，并且此文件是以 `./src/index.html` 为模板的。
+
+那么在 webpack5之后，我们再这样安装，那现在会安装到的版本是@5.0.0-beta.1，但是有一个问题，我们再引入 mini-css-extract-plugin 插件进行css提取之后呢，会报错：
+
+```javascript
+ERROR in TypeError: The ‘compilation’ argument must be an instance of Compilation
+
+JavascriptModulesPlugin.js:119 getCompilationHooks
+[webpack-demo]/[_webpack@5.6.0@webpack]/lib/javascript/JavascriptModulesPlugin.js:119:10
+
+CommonJsChunkFormatPlugin.js:30
+[webpack-demo]/[_webpack@5.6.0@webpack]/lib/javascript/CommonJsChunkFormatPlugin.js:30:19
+
+Hook.js:14 Hook.CALL_DELEGATE [as _call]
+[npm]/[webpack]/[_tapable@2.1.1@tapable]/lib/Hook.js:14:14
+
+Compiler.js:942 Compiler.newCompilation
+[npm]/[webpack]/lib/Compiler.js:942:30
+
+Compiler.js:984
+[npm]/[webpack]/lib/Compiler.js:984:29
+
+Hook.js:18 Hook.CALL_ASYNC_DELEGATE [as _callAsync]
+[npm]/[webpack]/[_tapable@2.1.1@tapable]/lib/Hook.js:18:14
+
+Compiler.js:979 Compiler.compile
+[npm]/[webpack]/lib/Compiler.js:979:28
+
+Compiler.js:494 Compiler.runAsChild
+[npm]/[webpack]/lib/Compiler.js:494:8
+webpack 5.6.0 compiled with 1 error in 1055 ms
+```
+
+那这就是因为 webpack5的版本和 html-webpack-plugin 的版本兼容问题而导致的，在查阅一些资料和博客后发现，将 html-webpack-plugin 插件的版本回退到 @5.0.0-alpha.9 之后就可以正常使用了。
