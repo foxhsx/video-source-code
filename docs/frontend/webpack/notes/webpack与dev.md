@@ -1,5 +1,5 @@
 ---
-title: webpack-cli与webpack-dev-server版本
+title: webpack-dev-server版本兼容
 date: 2020-12-11
 tags:
  - JavaScript

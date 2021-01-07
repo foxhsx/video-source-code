@@ -41,3 +41,5 @@ Webpack 有五个核心概念：
     | production  | 会将 process.env.NODE_ENV 的值设为production。<br />启动FlagDependencyUsagePlugin, FlagincludedChunksPlugin, ModuleConcatenationPlugin, NoEmitOnErrorsPlugins, OccurrenceOrderPlugin, SideEffectsFlagPlugin 和 UglifyJsPlugin. | 能让代码优化上线运行的环境 |
 
 除此之外，Webpack 还具备**代码拆分**的能力，它能够将应用中所有的模块按照我们的需要分块打包。这样一来，就不用担心全部代码打包到一起，产生单个文件过大，导致加载慢的问题。我们可以把应用初次加载所必需的模块打包到一起，其他的模块再单独打包，等到应用工作过程中实际需要用到某个模块，再异步加载该模块，实现**增量加载**，或者叫作**渐进式加载**，非常适合现代化的大型 Web 应用。
+
+**学习新事物不是说学会它的所有用法你就能提高，因为这些照着文档操作基本上谁都可以做到，很多时候它的思想才是突破点。能搞明白新事物为什么这样设计，基本上就算出道了。**
