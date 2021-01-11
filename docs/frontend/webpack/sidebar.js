@@ -17,6 +17,7 @@ module.exports = [
       '/frontend/webpack/notes/webpack_css',
       '/frontend/webpack/notes/webpack_extract_css',
       '/frontend/webpack/notes/webpack_css_compatible',
+      '/frontend/webpack/notes/webpack_css_compress',
       '/frontend/webpack/notes/webpack_html',
       '/frontend/webpack/notes/webpack_img',
       '/frontend/webpack/notes/webpack_other',
