@@ -1,3 +1,11 @@
+/*
+ * @Author: your name
+ * @Date: 2020-12-28 13:46:45
+ * @LastEditTime: 2021-01-11 09:41:55
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: \note\docs\.vuepress\nav.js
+ */
 module.exports = [
   { text: '前端',
     items: [
@@ -8,6 +16,7 @@ module.exports = [
       { text: 'Wepack', link: '/frontend/webpack/' },
       // { text: 'React', link: '/baodian/zero/' },
       // { text: 'node', link: '/baodian/zero/' }
+      { text: 'Dried', link: '/summary/' }
     ]
   },
   {

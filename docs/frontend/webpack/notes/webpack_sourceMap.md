@@ -14,13 +14,33 @@ categories:
 
 ## 什么是 Source Map
 
-**SourceMap**的作用：在调试的时候将产物代码显示回源代码的功能。
+**SourceMap**（源代码地图）的作用：在调试的时候将产物代码显示回源代码的功能，映射转换后的代码与源代码之间的关系。
 
 场景：通常在开发中，我们编写的代码会经过编译、封装、压缩等处理，最后形成处理过后的代码，而这种代码在浏览器中进行调试时会发现可读性很差，基本上面目全非了。
 
 ![](../imgs/sourceMap_finished.png)
 
-基本原理：编译的过程中，在生成产物代码的同时，生成产物代码中被转换的部分与源代码中相应部分的映射关系表。
+`.map` 后缀的 Source Map 文件是一个 JSON 格式的文件。这个 JSON 里面记录的就是转换后和转换前代码之间的映射关系，主要存在以下几个属性：
+
+- version：指定所使用的 Source Map 标准版本；
+
+- sources：记录转换前的源文件名称，因为有可能出现多个文件打包转换为一个文件的情况，所以这里是一个数组；
+
+- names：源码中使用的一些成员名称，我们都知道一般压缩代码时会将我们开发阶段编写的有意义的变量名替换为一些简短的字符，这个属性中记录的就是原始的名称；
+
+- mappings：是一个叫做 base64-VLQ 编码的字符串，里面记录的信息就是转换后代码中的字符和转换前代码中的字符之间的映射关系。
+
+  ​				![](../imgs/webpack_mapp.png)
+
+  ​				![](../imgs/webpack_map_mapping.png)
+
+  一般我们会在转换后的代码中通过添加一行注释的方式来去引入 Source Map 文件。（不过这个特性只是用于开发调试的）。
+
+  ![](../imgs/webpack_jquery.png)
+
+  这样我们在 Chrome 浏览器中如果打开了开发人员工具，它就会自动请求这个文件，然后根据这个文件的内容逆向解析出来源代码。同时因为有了映射关系，所以代码中如果出现了错误，也就能自动定位找到源代码中的位置了。
+
+**基本原理**：编译的过程中，在生成产物代码的同时，生成产物代码中被转换的部分与源代码中相应部分的映射关系表。
 
 ![](../imgs/sourceMap_relation.png)
 
@@ -83,19 +103,37 @@ if (options.devtool.includes("source-map")) {
 
 - false：即不开启 source map 功能。
 - eval
-  - 指在编译器中使用 EvalDevToolModulePlugin 作为 source map 的处理插件。
+  
+  - **指在编译器中使用 EvalDevToolModulePlugin 作为 source map 的处理插件**。在 JavaScript 中 eval 其实指的是 JavaScript 中的一个函数，可以用来运行字符串中的 JavaScript 代码。默认情况下，这段代码是运行在一个临时的虚拟机环境中。
+  
+    ![](../imgs/webpack_eval_vm.png)
+  
+  - 在 eval 参数里，可以通过 source URL 来声明这段代码所属文件路径：
+  
+    ```js
+    eval('console.log("foo~") // sourceURL=./foo/bar.js')
+    ```
+  
+    ![](../imgs/webpack_evalsourceURL.png)
+  
+    在启动项目后，一旦出现错误，浏览器的控制台就可以定位到具体是哪个模块中的代码。但是当点击控制台中的文件名打开这个文件后，看到的确实打包后的模块代码，**并非真正的源代码**。这是因为这种模式下是没有 Source Map 文件的，所以只能定位到是哪个文件出错。
 - [xxx-...]source-map
+  
   - 根据 devtool 对应值中有无 eval 字段来决定使用 EvalDevToolModulePlugin 还是 SourceMapDevToolPlugin 来作为 source map 的处理插件。其余关键字则决定传入到插件的相关字段赋值。
 - inline
+  
   - 决定是否传入插件的 filename 参数，作用是决定单独生成 source map 文件还是在行内显示，**其在 eval- 参数存在时无效**。
 - hidden
+  
   - 决定传入插件的 append 的赋值。作用是判断是否添加 SourceMappingURL 的注释，**其在 eval- 参数存在时无效**。
 - module
-  - 为 true 时传入插件的 module 为 true，作用是为加载器也就是 loaders 生成 source map。
+  
+  - 为 true 时传入插件的 module 为 true，作用是为加载器也就是 loaders 生成 source map。**名字中不带 module 的模式，解析出来的源代码是经过 Loader 加工后的结果**。
 - cheap：两处作用
   - 当 module 为 false 时，它决定插件 module 参数的最终取值，最终取值与 cheap 相反。
   - 它决定插件 columns 参数的取值，作用是决定生成的 source map 中是否包含列信息，在不包含列信息的情况下，调试时只能定位到指定代码所在的行而定位不到所在的列。
 - nosource
+  
   - nosource 决定了插件中 noSource 变量的取值，作用是决定生成的 source map 中是否包含源代码信息，不包含源码情况下只能显示调用堆栈信息。
 
 ## SourceMap处理插件
