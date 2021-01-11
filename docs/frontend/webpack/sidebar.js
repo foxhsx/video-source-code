@@ -21,6 +21,8 @@ module.exports = [
       '/frontend/webpack/notes/webpack_html',
       '/frontend/webpack/notes/webpack_img',
       '/frontend/webpack/notes/webpack_other',
+      '/frontend/webpack/notes/webpack_eslint',
+      '/frontend/webpack/notes/webpack_js_compatible',
       '/frontend/webpack/notes/webpack_base_config',
       '/frontend/webpack/notes/webpack与dev',
       '/frontend/webpack/notes/hot_update',
