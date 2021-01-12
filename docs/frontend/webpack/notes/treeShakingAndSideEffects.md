@@ -8,6 +8,8 @@ categories:
  - front
 ---
 
+本文为笔者笔记，原文[传送门](https://kaiwu.lagou.com/course/courseInfo.htm?courseId=550#/detail/pc?id=5285)
+
 今天说的是 webpack 打包结果优化的两个高级特性：TreeShaking 和 SideEffects。
 
 [[toc]]
