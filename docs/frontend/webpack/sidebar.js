@@ -1,7 +1,7 @@
 ﻿/*
  * @Author: your name
  * @Date: 2021-01-05 09:38:13
- * @LastEditTime: 2021-01-11 17:18:42
+ * @LastEditTime: 2021-01-12 14:24:36
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \note\docs\frontend\webpack\sidebar.js
@@ -29,6 +29,7 @@ module.exports = [
       '/frontend/webpack/notes/webpack_sourceMap',
       '/frontend/webpack/notes/webpack_loader',
       '/frontend/webpack/notes/webpack_plugin',
+      '/frontend/webpack/notes/treeShakingAndSideEffects',
       '/frontend/webpack/notes/webpack_structure',
       '/frontend/webpack/notes/webpack_build_principle',
     ]
