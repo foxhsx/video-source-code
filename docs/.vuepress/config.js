@@ -1,3 +1,11 @@
+/*
+ * @Author: your name
+ * @Date: 2020-12-28 13:46:45
+ * @LastEditTime: 2021-01-13 18:15:23
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: \note\docs\.vuepress\config.js
+ */
 module.exports = {
   title: '小和尚的博客',
   description: '不积跬步无以至千里',
@@ -21,6 +29,7 @@ module.exports = {
     sidebarDepth:2,
     lastUpdated: 'Last Updated',
     searchMaxSuggestions: 10,
+    subSidebar: 'auto',
     serviceWorker: {
       updatePOPUP: {
         message: '有新的内容',
@@ -69,6 +78,8 @@ module.exports = {
         link: 'http://sharedblog.cn/'
       },
     ],
-    plugins: ['mermaidjs']
+    plugins: ['mermaidjs'],
+    activeHeaderLinks: false,
+    displayAllHeaders: true
   }
 }
