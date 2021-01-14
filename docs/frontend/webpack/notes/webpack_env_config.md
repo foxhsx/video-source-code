@@ -73,3 +73,97 @@ module.exports = (env, argv) => {
 ├── webpack.dev.js ······························· 开发模式配置
 └── webpack.prod.js ······························ 生产模式配置
 ```
+
+那么不同的环境配置文件里我们都要先导入公共配置对象，然后这里我们可以使用`webpack-merge`来将公共配置和具体的环境配置合并到一起。
+
+::: tip
+
+这里为啥不用`Object.assign` 的原因是这个方法会完全覆盖掉前一个对象中同名属性。这对于普通值类型的属性是没有啥问题的，但是对于 plugins 这种数组而言，就会把它整个都替换掉，而我们想要的效果只是在原有的基础上，再 push 进去其他插件。
+
+:::
+
+先安装一下 `webpack-merge`：
+
+```sh
+npm i webpack-merge -D
+```
+
+安装完之后，我们在配置文件中引入这个模块。这个模块导出的就是一个 merge 函数，我们使用这个函数来合并这里的配置与公共的配置：
+
+```js
+// ./webpack.common.js
+module.exports = {
+    // ... 公共配置
+}
+
+// ./webpack.prod.js
+const merge = require('webpack-merge')
+const common = require('./webpack.common')
+module.exports = merge(common, {
+    // 生产模式配置
+})
+
+// ./webpack.dev.js
+const merge = require('webpack-merge')
+const common = require('./webpack.common')
+module.exports = merge(common, {
+    // 开发模式配置
+})
+```
+
+然后我们在命令行终端，通过 `--config` 参数来指定我们所使用的配置文件路径。
+
+```sh
+webpack --config webpack.prod.js
+```
+
+当然，我们也可以直接将其写到 `package.json` 中：
+
+```json
+"scripts": {
+   "build": "webpack --config webpack.prod.js"
+}
+```
+
+## 生产模式下的优化插件
+
+在 Webpack 4 中新增的 production 模式下，内部就自动开启了很多通用的优化功能。对于使用者而言，开箱即用是非常方便的，但是对于学习者而言，这种开箱即用会导致我们忽略掉很多需要了解的东西。以至于出现问题无从下手。
+
+我们先一起学习 production 模式下几个主要的优化功能，顺便了解一下 Webpack 如何优化打包结果。
+
+### Define Plugin
+
+DefinePlugin 是用来为我们代码中注入全局成员的。在 production 模式下，默认通过这个插件往代码中注入了一个 process.env.NODE_ENV。很多第三方模块都是通过这个成员去判断运行环境，从而决定是否执行例如打印日志之类的操作。
+
+DefinePlugin 是一个内置的插件，所以我们先导入 webpack 模块，然后在 plugins 中添加这个插件。这个插件的构造函数接收一个对象参数，对象中的成员都可以被注入到代码中：
+
+```js
+// ./webpack.config.js
+const webpack = require('webpack')
+module.exports = {
+    //...其他配置
+    plugins: [
+        new webpack.DefinePlugin({
+            API_BASE_URL: JSON.stringify('https://api.example.com')
+        })
+    ]
+}
+
+// ./src/main.js
+console.log(API_BASE_URL)
+```
+
+::: tip
+
+这里要使用 `JSON.stringify` 的原因是因为 `DefinePlugin` 其实就是把我们配置的字符串内容直接替换到了代码中，并不会包含引号，所以这里我们要么传入一个字符串字面量语句，要么使用 `JSON.stringify`的方式来得到表示这个值的字面量。
+
+:::
+
+### Mini CSS Extract Plugin
+
+[传送门](./webpack_extract_css)
+
+### Optimize CSS Assets Webpack Plugin
+
+[传送门](./webpack_css_compress)
+

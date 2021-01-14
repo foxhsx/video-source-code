@@ -17,6 +17,7 @@ module.exports = [
       '/frontend/Engineering/notes/efficiency',
       '/frontend/Engineering/notes/LowCodeDev',
       '/frontend/Engineering/notes/compileSpeedUp',
+      '/frontend/Engineering/notes/buildSpeedUp',
     ]
   }
 ]
