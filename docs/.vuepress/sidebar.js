@@ -5,4 +5,5 @@ module.exports = {
   '/questionBank/': require('../questionBank/sidebar'),
   '/books/': require('../books/sidebar'),
   '/summary/': require('../summary/sidebar'),
+  '/other/': require('../other/sidebar')
 }

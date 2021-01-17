@@ -44,5 +44,9 @@ module.exports = [
     text: '读书',
     link: '/books/'
   },
+  {
+    text: '其他',
+    link: '/other/'
+  },
   { text: 'TimeLine', link: '/timeline/', icon: 'reco-date' }
 ]
