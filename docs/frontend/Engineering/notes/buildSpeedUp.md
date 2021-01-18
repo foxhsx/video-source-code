@@ -142,4 +142,41 @@ optimization: {
 ![](../imgs/webpack_has_split.png)
 
 
+这里起作用的是 webpack 4 中内置的 SplitChunksPlugin，该插件在 production 模式下默认开启。其默认的分包规则是 **`chunks: 'async'`**，作用是分离动态引入的模块 (import('...'))，在处理动态引入的模块时能够自动分离出其中的公共依赖。
 
+但是对于多入口静态引用相同依赖包的情况，则**不会处理分包。而设置为 chunks: 'all'，则能够将所有的依赖情况都进行分包处理，从而减少了重复引入相同代码的情况。SplitChunksPlugin 的工作阶段是在 optimizeChunks 阶段（webpack4 中是在 optimizeChunksAdvanced，而在 webpack 5 中去掉了 basic 和 advanced，合并为 optimizeChunks），而压缩代码是在 optimizeChunksAssets 阶段，从而起到提升后续环节工作效率的作用。
+
+### Tree Shaking
+`Tree Shaking` 是指在构建打包过程中，移除那些引入但未被使用的无效代码（Dead-code-elimination）。
+| 执行语句 | 压缩代码阶段时长 | 产物大小 |
+| :-----------: | :----------: | :---------------: |
+| import _ from 'lodash' // 不调用 | 1013ms | 72.2kb |
+| import _ from 'lodash-es' // 不调用 | 40ms | 951bytes |
+| import _ from 'lodash'<br/>console.log(_.slice) | 1012ms | 72.2kb |
+| import _ from 'lodash-es'<br/>console.log(_.slice) | 1036ms | 85.5kb |
+| import * as _ from 'lodash-es'<br/>console.log(_.slice) | 99ms | 3.32kb |
+| import { slice } from 'lodash'<br/>console.log(slice) | 1036ms | 72.2kb |
+| import { slice } from 'lodash-es'<br/>console.log(slice) | 97ms | 3.32kb |
+| // use babel & rule.sideEffects: true<br/>import _ from 'lodash' // 不调用 | 1039ms | 85.5kb |
+| // optimizations.sideEffects: false<br/>import _ from 'lodash' // 不调用 | 1029ms | 85.5kb |
+| // use babel & babel-preset-env<br/>import _ from 'lodash-es' // 不调用 | 2008ms<br>（构建总时长6478ms） | 275kb |
+| // use babel & @babel/preset-env<br/>import _ from 'lodash-es' // 不调用 | 39ms<br>（构建总时长3223ms） | 951bytes |
+
+可以看到，引入不同的依赖包（lodash & lodash-es）、不同的引入方式，以及是否引用 babel 等，都会对 Tree Shaking 的效果产生影响。
+1. **ES6模块**：首先，**只有ES6类型的模块才能进行 Tree Shaking**。因为 ES6 模块的依赖关系是确定的，因此可以进行不依赖运行时的**静态分析**，而 CommonJS 类型的模块则不能。所以 CommonJS 类型的模块 lodash，在无论哪种引入方式下都不能实现 Tree Shaking，而需要依赖第三方提供的插件（例如 babel-plugin-lodash 等）才能实现动态删除无效代码。而 ES6 风格的模块 lodash-es，则可以进行 Tree Shaking 优化。
+2. **引入方式**：以 default 方式引入的模块，无法被 Tree Shaking；而引入单个导出对象的方式，无论是使用 `import * as xxx` 的语法，还是 `import {xxx}` 的语法，都可以进行 Tree Shaking。
+3. **sideEffects**：在webpack4中，会根据依赖模块 package.json 中的 sideEffects 属性来确认对应的依赖包代码是否会产生副作用。只有 sideEffects 为 false 的依赖包（或不在 sideEffects 对应数组中的文件），才可以实现安全移除未使用代码的功能。此外，在 webpack 配置的加载器规则和优化配置中，分别有 rule.sideEffects（默认为 false）和 optimization.sideEffects（默认为 true）选项，前者指代在要处理的模块中是否有副作用，后者指代在优化过程中是否遵循依赖模块的副作用描述。尤其前者，常用于对 CSS 文件模块开启副作用模式，以防止被移除。
+4. **Babel**：在 Babel 7 之前的**babel-preset-env**中，modules 的默认选项是**commonjs**，因此在使用 babel 处理模块时，即使模块本身是 ES6 风格的，也会在转换过程中，因为被转换而导致无法在后续优化阶段应用 Tree Shaking。而在 Babel 7 之后的 @babel/preset-env 中，modules 选项默认为 ‘auto’，它的含义是对 ES6 风格的模块不做转换（等同于 modules: false），而将其他类型的模块默认转换为 CommonJS 风格。因此我们会看到，后者即使经过 babel 处理，也能应用 Tree Shaking。
+
+## 小结
+代码优化阶段效率提升的方向和方法，大致可以分为两类：
+1. 以提升当前任务工作效率为目标
+   - 压缩JS与CSS
+2. 以提升后续工作效率为目标
+   - SplitChunks
+   - Tree Shaking
+3. 要让引入的模块支持Tree Shaking，一般有4点需要注意：
+   1. 引入的模块需要是 ES6 类型的，CommonJS 类型的则不支持。
+   2. 引入方式不能使用 default 。
+   3. 引入第三方依赖包的情况下，对应的 package.json 需要设置 sideEffects: false 来表明无副作用。
+   4. 使用 babel 的情况下，需要注意不同版本 babel 对于模块化的预设不同。
