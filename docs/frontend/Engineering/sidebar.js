@@ -18,6 +18,7 @@ module.exports = [
       '/frontend/Engineering/notes/LowCodeDev',
       '/frontend/Engineering/notes/compileSpeedUp',
       '/frontend/Engineering/notes/buildSpeedUp',
+      '/frontend/Engineering/notes/Cache',
     ]
   }
 ]
