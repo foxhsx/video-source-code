@@ -19,6 +19,7 @@ module.exports = [
       '/frontend/Engineering/notes/compileSpeedUp',
       '/frontend/Engineering/notes/buildSpeedUp',
       '/frontend/Engineering/notes/Cache',
+      '/frontend/Engineering/notes/IncrementalBuild',
     ]
   }
 ]
