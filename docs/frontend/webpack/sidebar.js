@@ -36,6 +36,7 @@ module.exports = [
       '/frontend/webpack/notes/webpack_structure',
       '/frontend/webpack/notes/webpack_analyzer',
       '/frontend/webpack/notes/webpack_build_principle',
+      '/frontend/webpack/notes/webpack_better',
     ]
   }
 ]

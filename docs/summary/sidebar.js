@@ -14,6 +14,7 @@ module.exports = [
     children: [
       '/summary/notes/skill',
       '/summary/notes/H5AndAndroid',
+      '/summary/notes/position_fixed',
     ]
   }
 ]
