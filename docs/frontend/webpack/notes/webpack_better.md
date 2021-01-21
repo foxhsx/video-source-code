@@ -154,3 +154,11 @@ console.log(a)
 ()=>{var o={263:function(o,r){r.a=11,console.log("module")}}...
 ```
 可以看到产物代码中只有被引入的属性 a 和 console 语句，而其他两个导出属性 b 和 c 已经在产物中被排除了。
+
+那么 webpack5 中的持久化缓存会影响哪些构建环节呢？
+- 编译模块：ResolverCachePlugin、Compilation/modules。
+- 优化模块：FlagDependencyExportsPlugin、ModuleConcatenationPlugin。
+- 生成代码：Compilation/codeGeneration、Compilation/assets。
+- 优化产物：TerserWebpackPlugin、RealContentHashPlugin。
+
+正是通过这样多环节的缓存读写控制，才打造出 Webpack 5 高效的持久化缓存功能。
