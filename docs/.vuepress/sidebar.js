@@ -1,5 +1,9 @@
 module.exports = {
-  '/frontend/': require('../frontend/sidebar'),
+  '/frontend/html/': require('../frontend/html/sidebar'),
+  '/frontend/css/': require('../frontend/css/sidebar'),
+  '/frontend/javascript/': require('../frontend/javascript/sidebar'),
+  '/frontend/webpack/': require('../frontend/webpack/sidebar'),
+  '/frontend/Engineering/': require('../frontend/Engineering/sidebar'),
   '/baodian/zero/': require('../baodian/zero/sidebar'),
   '/baodian/high/': require('../baodian/high/sidebar'),
   '/questionBank/': require('../questionBank/sidebar'),

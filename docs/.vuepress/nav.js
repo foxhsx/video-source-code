@@ -14,6 +14,7 @@ module.exports = [
       { text: 'JavaScript', link: '/frontend/javascript/' },
       { text: 'Vue', link: '/frontend/vue/' },
       { text: 'Wepack', link: '/frontend/webpack/' },
+      { text: 'Engineering', link: '/frontend/Engineering/' },
       // { text: 'React', link: '/baodian/zero/' },
       // { text: 'node', link: '/baodian/zero/' }
       { text: 'Dried', link: '/summary/' }

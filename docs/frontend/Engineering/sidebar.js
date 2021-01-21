@@ -21,6 +21,7 @@ module.exports = [
       '/frontend/Engineering/notes/Cache',
       '/frontend/Engineering/notes/IncrementalBuild',
       '/frontend/Engineering/notes/noBundle',
+      '/frontend/Engineering/notes/performanceOptimization',
     ]
   }
 ]

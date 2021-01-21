@@ -174,7 +174,9 @@ div { color: red }
 
 ::: warning
 
-注意：简单改动JS中的某些内容并不能达到热替换的效果。尽管网络同样新增了hot-update.json 和 hot-update.js ，但紧随其后的是如上一个实例一般的刷新了整个页面。[原因](./hot_update.html#模块热替换插件-hotmodulereplacementplugin)
+注意：简单改动JS中的某些内容并不能达到热替换的效果。尽管网络同样新增了hot-update.json 和 hot-update.js ，但紧随其后的是如上一个实例一般的刷新了整个页面。[原因](./hot_update.html#模块热替换插件-hotmodulereplacementplugin)。
+
+HMR功能对JS的处理，只能处理非入口JS文件的其他文件；而HTML也不能热更新（实际上可以在入口文件里加上HTML文件开启），因为就一个文件，原理和入口文件一样，开启热更新以后都会刷新页面。
 
 :::
 
