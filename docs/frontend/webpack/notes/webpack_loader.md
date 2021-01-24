@@ -104,6 +104,110 @@ CSS ——> css-loader ——> webpack —— bundle.js
 
 :::
 
+## oneOf
+
+之前在项目中，每个文件都会被多个 `loader` 挨个儿都过一遍，这其实对于一些特殊资源来说是比较麻烦并且是多余的。那么我们这里使用 `oneOf` 来优化这里的执行流程以及构建速度：
+
+```js
+module.exports = {
+    ...
+    module: {
+        rules: [
+            /**
+           * 正常来讲，一个文件只能被一个 loader 处理，
+           * 当一个文件要被多个 loader 处理，那么一定要指定 loader 执行的先后顺序
+           *   先执行 eslint ，再执行 babel，因为 eslint 是做语法检查的，如果语法错误，
+           * 那就不用再往下了，而且 babel 是做语法转换的，会把 ES6转成ES5，这个时候再去做
+           * eslint ，就会报错，比如提示你不要使用 var 关键字
+           */
+          {
+            // 在 package.json 中添加 eslintConfig  --> airbnb
+            test: /\.js$/,
+            exclude: /node_modules/,
+            // 优先执行的意思
+            enforce: 'pre',
+            loader: 'eslint-loader',
+            options: {
+              // 自动修复出现的问题
+              fix: true
+            }
+          },
+          {
+              oneOf: [
+                  {
+            test: /\.css$/,
+            use: [...commonCssLoader]
+          },
+          {
+            test: /\.less$/,
+            use: [
+              ...commonCssLoader,
+              'less-loader'
+            ]
+          },
+          {
+            // 在 package.json 中添加 eslintConfig  --> airbnb
+            test: /\.js$/,
+            exclude: /node_modules/,
+            loader: 'babel-loader',
+            options: {
+              // 预设
+              presets: [
+                [
+                  '@babel/preset-env',
+                  {
+                    useBuiltIns: 'usage',
+                    corejs: { version: 3 },
+                    targets: {
+                      chrome: '60',
+                      firefox: '50'
+                    }
+                  }
+                ]
+              ]
+            }
+          },
+          {
+            test: /\.(jpg|png|gif)$/,
+            loader: 'url-loader',
+            options: {
+              limit: 8 * 1024,
+              name: '[hash:10].[ext]',
+              output: 'imgs',
+              esModule: false
+            }
+          },
+          {
+            // HTML 中的图片问题
+            test: /\.html$/,
+            loader: 'html-loader'
+          },
+          {
+            // 处理其他文件
+            exclude: /\.(js|css|less|html|jpg|png|gif)$/,
+            // 原封不动的输出文件
+            loader: 'file-loader',
+            options: {
+              // 让输出的目录到 media下去
+              outputPath: 'media'
+            }
+          }
+              ]
+          }
+        ]
+      },
+    ...
+}
+```
+
+也就是说，经过 `oneOf` 配置之后呢，里面的 loader 只会匹配一个，一旦匹配到对应的文件后，就不再会去走其他的 loader 了。
+
+::: tip
+
+注意：我们在使用 oneOf 之后，不能又两项配置处理同一种类型的文件。所以我们将 eslint-loader 提取到了外面。
+
+:::
+
 ## 为什么要在JS 中加载其他资源
 
 做一个假设：假设我们在开发页面上的某个局部功能时，需要用到一个样式模块和一个图片文件。如果你还是将这些资源文件单独引入到 HTML 中，然后再到 JS 中添加对应的逻辑代码。试想一下，如果后期这个局部功能不用了，你就需要同时删除 JS 中的代码和 HTML 中的资源文件引入，也就是同时需要维护这两条线。而如果你遵照 Webpack 的这种设计，所有资源的加载都是由 JS 代码控制，后期也就只需要维护 JS 代码这一条线了。

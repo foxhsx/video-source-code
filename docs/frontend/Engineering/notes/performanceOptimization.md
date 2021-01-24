@@ -18,6 +18,9 @@ categories:
 
 - 优化打包构建速度
   - [HMR](../../webpack/notes/hot_update)
+  - [source-map](../../webpack/notes/webpack_sourceMap)
+  - [oneOf](../../webpack/notes/webpack_loader.html#oneof)
+  - [cache](./Cache)
 - 优化代码调试
 
 ## 生产环境新能优化

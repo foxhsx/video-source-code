@@ -97,6 +97,24 @@ if (options.devtool.includes("source-map")) {
 
 如上代码所示，devtool的值并非精确匹配，而是某个关键字只要包含在赋值中即可获得匹配。例如：'foo-eval-bar' 等同于 'eval'，'cheapfoo-source-map' 等同于 'cheap-source-map'。
 
+预设`source-map`：
+
+```js
+module.exports = {
+    ...
+    devtools: 'source-map'
+    ...
+}
+```
+
+简单介绍几个基础的 source-map及生成内联还是外部的source-map文件：
+
+1. inline-source-map：内联——只生成一个内联`source-map`。
+2. hidden-source-map：外部。
+3. eval-source-map：内联——每一个文件都生成对应的 `source-map`，都在 eval 里。
+4. nosource-source-map：外部
+5. cheap-source-map：外部。
+
 ## SourceMap名称关键字
 
 也可以理解为 devtool 选项对应的值。
@@ -122,10 +140,10 @@ if (options.devtool.includes("source-map")) {
   - 根据 devtool 对应值中有无 eval 字段来决定使用 EvalDevToolModulePlugin 还是 SourceMapDevToolPlugin 来作为 source map 的处理插件。其余关键字则决定传入到插件的相关字段赋值。
 - inline
   
-  - 决定是否传入插件的 filename 参数，作用是决定单独生成 source map 文件还是在行内显示，**其在 eval- 参数存在时无效**。
+  - 决定是否传入插件的 filename 参数，作用是决定单独生成 source map 文件还是在行内显示（若是内联，构建速度会更快），**其在 eval- 参数存在时无效**。
 - hidden
   
-  - 决定传入插件的 append 的赋值。作用是判断是否添加 SourceMappingURL 的注释，**其在 eval- 参数存在时无效**。
+  - 决定传入插件的 append 的赋值。作用是判断是否添加 SourceMappingURL 的注释，并生成外部source-map文件，**其在 eval- 参数存在时无效**。
 - module
   
   - 为 true 时传入插件的 module 为 true，作用是为加载器也就是 loaders 生成 source map。**名字中不带 module 的模式，解析出来的源代码是经过 Loader 加工后的结果**。
@@ -164,7 +182,7 @@ if (options.devtool.includes("source-map")) {
 
 **注**：none表示，这里省略 devtool 选项，通常用于生产环境，它将不生成  source map ，从而提高项目构建速度。
 
-## 不同预设的效果登记
+## 不同预设的效果等级
 
 - 质量
 

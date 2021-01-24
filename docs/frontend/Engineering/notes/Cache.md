@@ -50,6 +50,19 @@ babel-loader 是绝大部分项目中会使用到的 JS/JSX/TS 编译器。在 B
 - **cacheIdentifier**：用于计算缓存标识符。默认使用 babel 相关依赖包的版本、babelrc 配置文件的内容，以及环境变量等与模块内容一起参与计算缓存标识符。如果上述内容发生变化，即使模块内容不变，也不能命中缓存。
 - **cacheCompression**：默认为 true，将缓存内容压缩为 gz 包以减小缓存目录的体积。在设为 false 的情况会跳过压缩和解压的过程，从而提升这一阶段的速度。
 
+```js
+{
+    test: /\.js$/,
+    exclude: /node_modules/,
+    options: {
+        presets: [],
+        // 开启 babel 缓存
+        // 第二次构建时，会读取之前的缓存
+        cacheDirectory: true
+    }
+}
+```
+
 开启了缓存选项前后的构建时长如图：
 ![](../imgs/babel_cache_first.png)
 ![](../imgs/babel_cache.png)
@@ -85,7 +98,33 @@ module: {
 {"remainingRequest":"...lessons_fe_efficiency/13_cache/node_modules/babel-loader/lib/index.js!.../lessons_fe_efficiency/13_cache/src/example-basic.js","dependencies":[{"path":"...lessons_fe_efficiency/13_cache/src/example-basic.js","mtime":1599191174705},{"path":"...lessons_fe_efficiency/13_cache/node_modules/cache-loader/dist/cjs.js","mtime":499162500000},{"path":".../lessons_fe_efficiency/13_cache/node_modules/babel-loader/lib/index.js","mtime":499162500000}],"contextDependencies":[],"result":[{"type":"Buffer","data":"base64:aW1wb3J0IF8gZnJvbSAnbG9kYXNoJzs="},null]}
 ```
 
+::: tip
+
+文件资源缓存：
+
+假使我们在项目里新建了一个 server.js
+
+```js
+const express = require('express');
+const app = express();
+
+app.use(express.static('build', { maxAge: 1000 * 3600 }));
+
+app.listen(3000)
+```
+
+这样启动服务后 `node server.js`，就会强制将打包后的资源缓存下来，而又因为缓存问题，我们还需要在打包后的资源文件上加上 hash 值，来应对修改文件后让浏览器重新加载修改后的资源：
+
+- hash：每次 webpack 构建时都会生成一个唯一的 hash 值，但是有一个问题是因为 js 和 css 同时使用一个 hash 值，所以可能会导致只改动了一个文件，从而项目重新打包，会致使所有缓存失效。
+- chunkhash：针对上述问题，根据 chunk 生成的 hash 值。如果打包来源于同一个 chunk，那么 hash 值就一样。但是这个还是有问题，假如 css 文件是在 js 中被引入的，那么还是同属于一个 chunk，当修改 css 后，js 和 css 的 hash 值还是一样的。
+- contenthash: 根据文件的内容生成 hash 值。不同文件 hash 值一定不一样。
+
+让代码上线运行缓存更好使用。
+
+:::
+
 ## 优化打包阶段的缓存优化
+
 ### 生成 ChunkAssets 时的缓存优化
 在 webpack 4 中，生成 ChunkAsset 过程中的缓存优化是受限的；只有在 watch 模式下，且配置中开启 cache 时才能在这一阶段执行缓存的配置。这是因为，在 webpack 4 中，缓存插件是基于内存的，只有在 watch 模式下才能在内存中获取到相应的缓存数据对象。在 webpack 5 中这一问题已经解决。
 
