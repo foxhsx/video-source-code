@@ -21,6 +21,8 @@ categories:
   - [source-map](../../webpack/notes/webpack_sourceMap)
   - [oneOf](../../webpack/notes/webpack_loader.html#oneof)
   - [cache](./Cache)
+  - [Tree Shaking](../../webpack/notes/treeShakingAndSideEffects)
+  - [Code Split](../../webpack/notes/webpack_CodeSplitting)
 - 优化代码调试
 
 ## 生产环境新能优化

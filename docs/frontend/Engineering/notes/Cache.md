@@ -73,9 +73,7 @@ babel-loader 是绝大部分项目中会使用到的 JS/JSX/TS 编译器。在 B
 在编译过程中利用缓存的第二种方式是使用 cache-loader。在使用时，需要将 cache-loader 添加到对构建效率影响较大的 loader（如 babel-loader 等）之前：
 ```js
 // ./webpack.cache.config.js
-
 ...
-
 module: {
   rules: [
     {
