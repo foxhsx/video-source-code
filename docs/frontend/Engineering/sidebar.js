@@ -22,6 +22,7 @@ module.exports = [
       '/frontend/Engineering/notes/IncrementalBuild',
       '/frontend/Engineering/notes/noBundle',
       '/frontend/Engineering/notes/performanceOptimization',
+      '/frontend/Engineering/notes/lazyLoading',
     ]
   }
 ]
