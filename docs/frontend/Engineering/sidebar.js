@@ -23,6 +23,7 @@ module.exports = [
       '/frontend/Engineering/notes/noBundle',
       '/frontend/Engineering/notes/performanceOptimization',
       '/frontend/Engineering/notes/lazyLoading',
+      '/frontend/Engineering/notes/PWA',
     ]
   }
 ]
