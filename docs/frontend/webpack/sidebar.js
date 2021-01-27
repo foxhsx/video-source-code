@@ -33,6 +33,8 @@ module.exports = [
       '/frontend/webpack/notes/treeShakingAndSideEffects',
       '/frontend/webpack/notes/webpack_CodeSplitting',
       '/frontend/webpack/notes/webpack_thread',
+      '/frontend/webpack/notes/webpack_externals',
+      '/frontend/webpack/notes/webpack_dll',
       '/frontend/webpack/notes/webpack_env_config',
       '/frontend/webpack/notes/webpack_structure',
       '/frontend/webpack/notes/webpack_analyzer',
