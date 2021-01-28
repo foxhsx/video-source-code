@@ -64,6 +64,10 @@ module.exports = {
     new webpack.DllReferencePlugin({
       // 拿到对应的映射关系文件，并对其进行解析
       manifest: resolve(__dirname, 'dll/manifest.json')
+    }),
+    new AddAssetHtmlWebpackPlugin({
+      // 将 jquery 这个包引进来，并输出到 html 页面中
+      filepath: resolve(__dirname, 'dll/jquery.js')
     })
   ],
   mode: 'production'
@@ -77,4 +81,13 @@ module.exports = {
 webpack --config webpack.dll.js
 ```
 
-而在 `webpack.config.js` 中，`DllReferencePlugin` 这项配置会告诉 webpack 哪些库不参与打包，同时使用时的名称也需要改变。
+而在 `webpack.config.js` 中，`DllReferencePlugin` 这项配置会告诉 webpack 哪些库不参与打包，同时使用时的名称也需要改变。所以这里我们还需要使用到 `add-asset-html-webpack-plugin` 插件，它的作用就是**将某个文件打包输出去，并在 html 中自动引入该资源**。
+
+::: tip
+
+**DllReferencePlugin**：忽略打包 jQuery；
+
+**AddAssetHtmlWebpackPlugin**：将之前 dll 打包的 jQuery 引进来，并动态输出到 html 页面中。
+
+:::
+
