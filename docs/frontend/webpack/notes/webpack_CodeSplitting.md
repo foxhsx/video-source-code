@@ -1,5 +1,5 @@
 ---
-title: webpack构建结果优化——Code Splitting
+title: webpack构建结果优化Code Splitting
 date: 2021-01-13
 tags:
  - JavaScript

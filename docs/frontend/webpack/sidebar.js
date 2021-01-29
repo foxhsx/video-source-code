@@ -24,7 +24,6 @@ module.exports = [
       '/frontend/webpack/notes/webpack_eslint',
       '/frontend/webpack/notes/webpack_js_compatible',
       '/frontend/webpack/notes/webpack_compress_htmljs',
-      '/frontend/webpack/notes/webpack_base_config',
       '/frontend/webpack/notes/webpack与dev',
       '/frontend/webpack/notes/hot_update',
       '/frontend/webpack/notes/webpack_sourceMap',
@@ -40,6 +39,7 @@ module.exports = [
       '/frontend/webpack/notes/webpack_analyzer',
       '/frontend/webpack/notes/webpack_build_principle',
       '/frontend/webpack/notes/webpack_better',
+      '/frontend/webpack/notes/webpack_base_config',
     ]
   }
 ]
