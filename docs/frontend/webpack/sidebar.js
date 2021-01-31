@@ -14,6 +14,11 @@ module.exports = [
     children: [
       '/frontend/webpack/notes/modularization_history',
       '/frontend/webpack/notes/Install',
+      '/frontend/webpack/notes/webpack_entry',
+      '/frontend/webpack/notes/webpack_output',
+      '/frontend/webpack/notes/webpack_module',
+      '/frontend/webpack/notes/webpack_resolve',
+      '/frontend/webpack/notes/webpack_optimization',
       '/frontend/webpack/notes/webpack_css',
       '/frontend/webpack/notes/webpack_extract_css',
       '/frontend/webpack/notes/webpack_css_compatible',

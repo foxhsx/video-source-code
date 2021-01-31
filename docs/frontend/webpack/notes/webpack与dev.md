@@ -82,6 +82,15 @@ npx webpack-dev-server
 
   :::
 
+- watchContentBase
+
+  - 告诉 dev-server 监听 [`devServer.contentBase`]选项提供的文件。 默认情况下禁用。 启用后，文件更改将触发整个页面重新加载。说白了就是监视 contentBase 目录下的所有文件，一旦文件变化就会 reload。
+  - 和 contentBase 绑定在一起。
+
+- watchOptions
+
+  - ignored：监视文件时选择要忽略的文件，一般会忽略掉 node_modules 目录。
+
 - pubilcPath
 
   - 默认值是`/`，表示devServer这个服务器在以`contentBase`为根路径的基础上，再以 `publicPath` 为对外开放的路径。主要是对外提供开发过程中 webpack 构建的文件。即**决定外部能以什么样的路径访问到构建文件**。
@@ -90,7 +99,7 @@ npx webpack-dev-server
   - ***确保* `devServer.publicPath` *始终以正斜杠开头和结尾。***
   - ***建议* `devServer.publicPath` *与* [`output.publicPath`](https://webpack.docschina.org/configuration/output/#outputpublicpath) *相同。***
 
-- compress
+- compress：开启 gzip 压缩。
 
 - proxy
 
@@ -126,6 +135,8 @@ npx webpack-dev-server
     **我们可以理解为浏览器显示的是我们发送给代理服务器的请求，而后端接收到的是代码服务器处理后的请求。**
 
     :::
+    
+  - 适用在开发环境，如果是在生产环境，需要在 nginx 上设置代理，如果不涉及跨域，就不需要设置。
 
 - open
 
@@ -149,9 +160,17 @@ npx webpack-dev-server
 
 - hot
 
-- watchContentBase
+- clientLogLevel
 
-  - 告诉 dev-server 监听 [`devServer.contentBase`]选项提供的文件。 默认情况下禁用。 启用后，文件更改将触发整个页面重新加载。
+  - 是否显示启动服务器以后的日志信息，将在下个版本弃用。
+
+- quiet
+
+  - 除了一些基本启动信息以外，其他内容都不要显示。
+
+- overlay
+
+  - 出错提示是否在浏览器中全屏展示。
 
 **问题**：
 

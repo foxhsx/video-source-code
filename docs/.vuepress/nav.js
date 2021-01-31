@@ -13,7 +13,7 @@ module.exports = [
       { text: 'CSS', link: '/frontend/css/' },
       { text: 'JavaScript', link: '/frontend/javascript/' },
       { text: 'Vue', link: '/frontend/vue/' },
-      { text: 'Wepack', link: '/frontend/webpack/' },
+      { text: 'Webpack', link: '/frontend/webpack/' },
       { text: 'Engineering', link: '/frontend/Engineering/' },
       // { text: 'React', link: '/baodian/zero/' },
       // { text: 'node', link: '/baodian/zero/' }
