@@ -40,6 +40,8 @@ categories:
 
 Code Splitting 通过把项目中的资源模块按照我们设计的规则打包到不同的 bundle 中，从而降低启动成本，提高响应速度。
 
+代码分片可以用于获取更小的`bundle`，以及控制资源加载优先级，从而提高页面加载时间。它是在 chunk 生成之后，将原先以入口点来划分的 chunks 根据一定的规则（例如异步引入或分离公共依赖等），分离出 chunk 的过程。
+
 webpack 实现分包的方式主要有两种：
 
 - 根据业务不用配置多个打包入口，输出多个打包结果；
@@ -173,7 +175,13 @@ module.exports = {
 
 这对应整个项目来说是可怕的，如果我们的公共模块有很多个，而且体积也很大，那项目在运行时的就会重复加载这些资源，会降低响应速度，不利于公共模块的缓存。
 
-所以我们需要将这些公共的模块打包到一个 bundle 中。我们需要在 webpack 的优化配置 optimization 中开启 splitChunks 功能即可：
+所以我们需要将这些公共的模块打包到一个 bundle 中。
+
+在 webpack4 之前的版本中，我们通常会使用 `CommonsChunkPlugin` 插件来进行代码模块的拆分，它会将公共模块拆出来，最终合成的文件能够在最开始的时候加载一次，然后存到缓存中供后续使用。
+
+而在4之后，使用 `SplitChunksPlugin` 代替。
+
+我们需要在 webpack 的优化配置 optimization 中开启 splitChunks 功能即可：
 
 ```js
 // ./webpack.config.js
@@ -199,6 +207,66 @@ module.exports = {
 ![](../imgs/webpack_splitChunks.png)
 
 图中的文件就是 index  和 album 中公共的模块部分。
+
+那么我们接下来看看它都有哪些默认配置：
+
+```js
+splitChunks: {
+    chunks: 'async',
+    minSize: {
+        javascript: 30000,
+        style: 50000,
+    },
+    maxSize: 0,
+    minChunks: 1,
+    maxAsyncRequests: 5,
+    maxInitialRequests: 3,
+    automaticNameDelimiter: '-',
+    name: true,
+    cacheGroups: {
+        vendors: {
+            test: /[\\/]node_modules[\\/]/,
+            priority: -10,
+        },
+        default: {
+            minChunks: 2,
+            priority: -20,
+            reuseExistingChunk: true
+        }
+    }
+}
+```
+
+简单说下里面的配置项含义：
+
+- **chunks**：即 `SplitChunks` 的**工作模式**。3个可选值：
+  - **async**：默认情况下，`SplitChunks` 只对异步 `chunks` 生效，并不需要配置，作用是分离动态引入的模块（import('...')），在处理动态引入的模块时能够自动分离其中的公共依赖；
+  - **initial**：则表示只对入口 `chunk` 生效；
+  - **all**：表示 `SplitChunks` 将会对所有的 `chunks` 都生效；
+- **minSize**：设置提取后的 `JavaScript chunk` 和 `CSS chunk` 代码体积大小的最小值。默认 `JavaScript chunk` 大小为30kB，`CSS chunk` 代码大小为50kB。
+- **minChunks**：最小` chunk` 数为1。
+- **maxAsyncRequests**：在按需加载过程中，默认并行请求的资源最大值小于等于5。
+- **maxInitialRequests**：默认在首次加载时，并行请求的资源数最大值小于等于3。
+- **name**：默认为 true。意味着 `SplitChunks` 可以根据 `cacheGroups` 和作用范围自动为新生成的 chunk 命名，并以 `automaticNameDelimiter` 分隔。
+- **automaticNameDelimiter**：'~'，名称连接符
+- **cacheGroups**：可以理解成分离 chunks 时的规则。
+  - vendors：用于提取所有 node_modules 中符合条件的模块。
+  - default：作用于被多次引用的模块。
+
+当然，我们也不是说想怎么提取模块就怎么提取，还是需要满足一定的条件才可以，以下是 `SplitChunks` 默认情况下的提取条件：
+
+- 提取后的 chunk 可被共享或者来自 node_modules 目录。即被多次引用或处于 node_modules 中的模块更倾向于是通用模块，比较适合被提取出来。
+- 提取出来的 JavaScript chunk 体积大于30kB（压缩和 `gzip` 之前），CSS chunk 体积大于 50kB。
+- 在按需加载过程中，并行请求的资源最大值小于等于5。
+- 在首次加载时，并行请求的资源数最大值小于等于3。
+
+::: tip
+
+在设置了 splitChunk 以后还有一个问题需要注意：[传送门](./webpack_optimization)
+
+:::
+
+以上就是对 `splitChunk` 配置的大概介绍。
 
 ## 动态导入
 

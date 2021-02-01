@@ -42,12 +42,21 @@ module.exports = [
     ]
   },
   {
-    text: '读书',
-    link: '/books/'
-  },
-  {
     text: '其他',
-    link: '/other/'
+    items: [
+      {
+        text: '随笔',
+        link: '/other/'
+      },
+      {
+        text: '学习',
+        link: '/study/'
+      },
+      {
+        text: '读书',
+        link: '/books/'
+      },
+    ]
   },
   { text: 'TimeLine', link: '/timeline/', icon: 'reco-date' }
 ]
