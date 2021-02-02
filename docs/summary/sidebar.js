@@ -15,6 +15,7 @@ module.exports = [
       '/summary/notes/skill',
       '/summary/notes/H5AndAndroid',
       '/summary/notes/position_fixed',
+      '/summary/notes/VSCode_svn',
     ]
   }
 ]
