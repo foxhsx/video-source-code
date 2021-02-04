@@ -5,6 +5,7 @@ module.exports = [
     path: '/frontend/vue/',
     children: [
       '/frontend/vue/notes/vnodeToDOM',
+      '/frontend/vue/notes/diff_up',
     ]
   }
 ]
