@@ -67,4 +67,63 @@ const setupRenderEffect = (
     }, prodEffectOptions)
 }
 ```
+可以看到，更新组件主要做了三件事：**更新组件 vnode 节点**、**渲染新的子树 vnode**、**根据新旧子树 vnode 执行 patch 逻辑**。
 
+首先，更新组件 vnode 节点，这里会有一个判断，判断组件实例中是否含有新的组件 vnode（用 next 表示），有则更新组件，没有则 next 指向之前的组件 vnode。
+
+接着是渲染新的子树 vnode，因为数据发生了变化，而模板又与数据相关，所以渲染生成的子树 vnode 也会发生相应的变化。
+
+最后就是**核心逻辑patch**，用来比对新旧子树 vnode 的不同，并找到一种合适的方式更新 DOM。我们来详细看看这部分。
+
+## 核心逻辑：patch 流程
+我们先来看 patch 流程的实现代码：
+```js
+const patch = (
+    n1,
+    n2,
+    container,
+    anchor = null,
+    parentComponent = null,
+    parentSuspense = null,
+    isSVG = false,
+    optimized = false
+) => {
+    // 如果存在新旧节点，且新旧节点类型不同，则销毁旧节点
+    if (n1 && !isSameVNodeType(n1, n2)) {
+        anchor = getNextHostNode(n1)
+        unmount(n1, parentComponent, parentSuspense, true)
+        // n1 设置为 null 保证后续都走 mount 逻辑
+        n1 = null
+    }
+    const { type, shapeFlag } = n2
+    switch (type) {
+        case Text:
+            // 处理文本节点
+            break
+        case Comment:
+            // 处理注释节点
+            break
+        case Static:
+            // 处理静态节点
+            break
+        case Fragment:
+            // 处理 Fragment 节点
+            break
+        default:
+            if (shapeFlag & 1 /* ELEMENT */) {
+                // 处理普通 DOM 元素
+                processElement(n1, n2, container, anchor, parentComponent, parentSuspense, isSVG, optimized)
+            }
+            else if (shapeFlag & 6 /* COMPONENT */) {
+                // 处理组件
+                processComponent(n1, n2, container, anchor, parentComponent, parentSuspense, isSVG, optimized)
+            }
+            else if (shapeFlag & 64 /* TELEPORT */) {
+                // 处理 TELEPORT
+            }
+            else if (shapeFlag & 128 /* SUSPENSE */) {
+                // 处理 SUSPENSE
+            }
+    }
+}
+```
