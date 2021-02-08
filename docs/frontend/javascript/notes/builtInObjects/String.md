@@ -252,6 +252,6 @@ console.log(str.toLowerCase());  // hello world
 
 ## **附加、字符串面试题**
 
-[编写 js 函数，用于获得输入参数的后缀名，如输入 abc.txt，返回 .txt。](../../../../baodian/zero/JavaScript/notes/String.md)
+[编写 js 函数，用于获得输入参数的后缀名，如输入 abc.txt，返回 .txt。](../../../../baodian/zero/JavaScript/notes/String.html)
 
-[编写一个转换驼峰形式的函数](../../../../baodian/zero/JavaScript/notes/cameback.md)
+[编写一个转换驼峰形式的函数](../../../../baodian/zero/JavaScript/notes/cameback.html)

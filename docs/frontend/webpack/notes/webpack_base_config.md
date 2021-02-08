@@ -9,37 +9,37 @@ categories:
 ---
 
 ## 基础
- - [概述](../../webpack/README.md)
- - [前端模块化发展史](./modularization_history.md)
- - [安装](./Install.md)
+ - [概述](../../webpack/)
+ - [前端模块化发展史](./modularization_history.html)
+ - [安装](./Install.html)
 
 ## 开发环境配置
- - [打包样式资源](./webpack_css.md)
- - [打包html资源](./webpack_html.md)
- - [打包图片资源](./webpack_img.md)
- - [打包其他资源](./webpack_other.md)
- - [devServer](./webpack与dev.md)
+ - [打包样式资源](./webpack_css.html)
+ - [打包html资源](./webpack_html.html)
+ - [打包图片资源](./webpack_img.html)
+ - [打包其他资源](./webpack_other.html)
+ - [devServer](./webpack与dev.html)
 
 ## 生产环境配置
- - [提取css](./webpack_extract_css.md)
- - [css兼容性处理](./webpack_css_compatible.md)
- - [压缩css](./webpack_css_compress.md)
- - [js语法检查](./webpack_eslint.md)
- - [js兼容性处理](./webpack_js_compatible.md)
- - [js压缩与html压缩](./webpack_compress_htmljs.md)
+ - [提取css](./webpack_extract_css.html)
+ - [css兼容性处理](./webpack_css_compatible.html)
+ - [压缩css](./webpack_css_compress.html)
+ - [js语法检查](./webpack_eslint.html)
+ - [js兼容性处理](./webpack_js_compatible.html)
+ - [js压缩与html压缩](./webpack_compress_htmljs.html)
 
 ## 优化配置
- - [HMR](./hot_update.md)
- - [source-map](./webpack_sourceMap.md)
- - [oneOf](./webpack_loader.md#oneof)
- - [cache](../../engineering/notes/Cache.md)
- - [tree_shaking](./treeShakingAndSideEffects.md)
- - [code_split](./webpack_CodeSplitting.md)
- - [lazy_loading](../../engineering/notes/lazyLoading.md)
- - [pwa](../../engineering/notes/PWA.md)
- - [thread](./webpack_thread.md)
- - [externals](./webpack_externals.md)
- - [dll](./webpack_dll.md)
+ - [HMR](./hot_update.html)
+ - [source-map](./webpack_sourceMap.html)
+ - [oneOf](./webpack_loader.html#oneof)
+ - [cache](../../engineering/notes/Cache.html)
+ - [tree_shaking](./treeShakingAndSideEffects.html)
+ - [code_split](./webpack_CodeSplitting.html)
+ - [lazy_loading](../../engineering/notes/lazyLoading.html)
+ - [pwa](../../engineering/notes/PWA.html)
+ - [thread](./webpack_thread.html)
+ - [externals](./webpack_externals.html)
+ - [dll](./webpack_dll.html)
   
 ## 配置详解
 
