@@ -126,4 +126,165 @@ const patch = (
             }
     }
 }
+function isSameVNodeType (n1, n2) {
+    // n1 和 n2 节点的 type 和 key 都相同，才是相同节点
+    return n1.type === n2.type && n1.key === n2.key
+}
 ```
+
+在这个过程中，首先判断新旧节点是否是相同的 vnode 类型，如果不同，比如一个 div 更新成一个 ul，那么最简单的操作就是阐述旧的 div 节点，再去挂载新的 ul 节点。
+
+如果是相同的 vnode 类型，就需要走 diff 更新流程了，接着会根据不同的 vnode 类型执行不同的处理逻辑，这里我们仍然只分析普通元素类型和组件类型的处理过程。
+
+**1. 处理组件**
+
+如何处理组件的呢？举个例子，我们在父组件 App 中引入了 Hello 组件：
+
+```vue
+<template>
+	<div class="app">
+        <p>
+            This is an app.
+    	</p>
+        <hello :msg="msg"></hello>
+        <button @click="toggle">Toggle msg</button>
+    </div>
+</template>
+<script>
+	export default {
+        data() {
+            return {
+                msg: 'Vue'
+            }
+        },
+        methods: {
+            toggle() {
+                this.msg = this.msg === 'Vue' ? 'World': 'Vue'
+            }
+        }
+    }
+</script>
+```
+
+Hello 组件中是`div`包裹着一个 `p`标签，如下所示：
+
+```vue
+<template>
+	<div class="hello">
+        <p>
+            Hello, {{msg}}
+    	</p>
+    </div>
+</template>
+<script>
+	export default {
+        props: {
+            msg: {
+                msg: String
+            }
+        }
+    }
+</script>
+```
+
+点击 App 组件中的按钮执行 toggle 函数，就会修改 data 中的 msg，并且会触发 App 组件的重新渲染。
+
+结合前面对渲染函数的流程分析，这里 App 组件的根节点是 div 标签，重新渲染的子树 vnode 节点是一个普通元素的 vnode，应该先走 processElement 逻辑。组件的更新最终还是要转换成内部真实 DOM 的更新，而实际上普通元素的处理流程才是真正做DOM的更新。
+
+和渲染过程类似，更新过程也是一个树的深度优先遍历过程，更新完当前节点后，就会遍历更新它的子节点，因此在遍历的过程中会遇到 hello 这个组件的 vnode 节点，就会执行到 processComponent 处理逻辑中，我们再来看一下它的实现，我们重点关注一下组件更新的相关逻辑：
+
+```js
+const processComponent = (
+	n1,
+    n2,
+    container,
+    anchor,
+    parentComponent,
+    parentSuspense,
+    isSVG,
+    optimized
+) => {
+    if (n1 == null) {
+        // 挂载组件
+    } else {
+        // 更新组件
+        updateComponent(n1, n2, parentComponent, optimized)
+    }
+}
+const updateComponent = (
+	n1,
+    n2,
+    parentComponent,
+    optimized
+) => {
+    const instance = (n2.component = n1.component)
+    // 根据新旧子组件 vnode 判断是否需要更新子组件
+    if (shouldUpdateComponent(n1, n2, parentComponent, optimized)) {
+        // 新的子组件 vnode 赋值给 instance.next
+        instance.next = n2
+        // 子组件也可能因为数据变化被添加到更新队列里去，移除它们防止对一个子组件重复更新
+        invalidateJob(instance.update)
+        // 执行子组件的副作用渲染函数
+        instance.update()
+    } else {
+        // 不需要更新，只复制属性
+        n2.component = n1.component
+        n2.el = n1.el
+    }
+}
+```
+
+可以看到，processComponent 主要通过执行 updateComponent 函数来更新子组件，updateComponent 函数在更新子组件的时候，会先执行 shouldUpdateComponent 函数，根据新旧子组件 vnode 来判断是否需要更新子组件。这里你只需要知道，在 shouldUpdateComponent 函数的内部，主要是通过检测和对比组件 vnode 中的 props、children、dirs、transition 等属性，来决定子组件是否需要更新。
+
+因为在一个组件的子组件是否需要更新，我们主要依据子组件 vnode 是否存在一些会影响组件更新的属性变化进行判断，如果存在就会更新子组件。
+
+虽然 Vue.js 的更新粒度是组件级别的，组件的数据变化实惠影响当前组件的更新，但是在组件更新的过程中，也会对子组件做一定的检查，判断子组件是否也要更新，并通过某种机制避免子组件重复更新。
+
+再回到副作用渲染函数中，有了前面的讲解，我们再看组件更新的这部分代码，就能很好地理解它的逻辑了：
+
+```js
+// 更新组件
+let { next, vnode } = instance
+// next 表示新的组件 vnode 
+if (next) {
+    // 更新组件 vnode 节点信息
+    updateComponentPreRender(instance, next, optimized)
+} else {
+    next = vnode
+}
+
+const updateComponentPreRender = (
+	instance,
+    nextVNode,
+    optimized
+) => {
+    // 新组件 vnode 的 component 属性指向组件实例
+    nextVNode.component = instance
+    // 旧组件 vnode 的 props 属性
+    const prevProps = instance.vnode.props
+    // 组件实例的 vnode 属性指向新的组件 vnode
+    instance.vnode = nextVNode
+    // 清空 next 属性，为了下一次重新渲染准备
+    instance.next = null
+    // 更新 props
+    updateProps(instance, nextVNode.props, prevProps, optimized)
+    // 更新插槽
+    updateSlots(instance, nextVNode.children)
+}
+```
+
+结合上面的代码，我们在更新组件的 DOM 前，需要先更新组件 vnode 节点信息，包括更改组件实例的 vnode 指针、更新 props 和更新插槽等一系列操作，因为组件在稍后执行 renderComponentRoot 时会重新渲染新的子树 vnode，它依赖了更新后的组件 vnode 中的 props 和 slots 等数据。
+
+所以我们现在知道了一个组件重新渲染可能会有两种场景：
+
+1. 组件本身的数据变化：这种情况下 next 是 null
+2. 父组件在更新的过程汇总，遇到子组件节点，先判断子组件是否需要更新，如果需要则主动执行子组件的重新渲染办法，这种情况下 next 就是新的子组件 vnode。
+
+那这个子组件对应的新的组件 vnode 是什么时候创建的呢？
+
+答案很简单，它是在父组件重新渲染的过程中，通过 renderComponentRoot 渲染子树 vnode 的时候生成，因为子树 vnode 是个树形结构，通过遍历它的子节点讲究可以访问到其对应的组件 vnode。再拿我们前面举的例子来说，当App组件重新渲染的时候，在执行 renderComponentRoot 生成子树 vnode 的过程中，也生成了 hello 组件对应的新的组件 vnode。
+
+所以 processComponent 处理组件 vnode ，本质上就是去判断子组件是否需要更新，如果需要则递归执行子组件的副作用渲染函数来更新，否则仅仅更新一些 vnode 属性，并让子组件实例保留对组件 vnode 的引用，用于子组件自身数据变化引起组件重新渲染的时候，在渲染函数内部可以拿到新的组件 vnode。
+
+那组件是抽象的，组件的更新最终还是会落到对普通 DOM 元素的更新。
+
