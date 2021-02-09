@@ -5,6 +5,7 @@ module.exports = {
   '/frontend/webpack/': require('../frontend/webpack/sidebar'),
   '/frontend/Engineering/': require('../frontend/Engineering/sidebar'),
   '/frontend/vue/': require('../frontend/vue/sidebar'),
+  '/frontend/react/': require('../frontend/react/sidebar'),
   '/baodian/zero/': require('../baodian/zero/sidebar'),
   '/baodian/high/': require('../baodian/high/sidebar'),
   '/questionBank/': require('../questionBank/sidebar'),
