@@ -288,3 +288,182 @@ const updateComponentPreRender = (
 
 那组件是抽象的，组件的更新最终还是会落到对普通 DOM 元素的更新。
 
+**2. 处理普通元素**
+
+修改一下之前的示例代码：
+
+```vue
+<template>
+	<div class="app">
+        <p>
+            This is {{msg}}
+    	</p>
+        <buton @click="toggle">Toggle msg</buton>
+    </div>
+</template>
+<script>
+	export default {
+        data() {
+            return {
+                msg: 'Vue'
+            }
+        },
+        methods: {
+            toggle() {
+                this.msg = 'Vue' ? 'World': 'Vue'
+            }
+        }
+    }
+</script>
+```
+
+当我们点击 App 组件中的按钮就会触发 toggle 方法，从而修改 msg 的值，这就触发了 App 组件的重新渲染。
+
+App 组件的根节点是 div 元素，重新渲染的子树 vnode 节点是一个普通元素的 vnode，所以应该先走 processElement 逻辑：
+
+```js
+const processElement = (
+	n1,
+    n2,
+    container,
+    anchor,
+    parentComponent,
+    parentSuspense,
+    isSVG,
+    optimized
+) => {
+    isSVG = isSVG || n2.type === 'svg'
+    if (n1 == null) {
+        // 挂载元素
+    } else {
+        // 更新元素
+        patchElement(n1,n2,parentComponent, parentSuspense, isSVG,optimized)
+    }
+}
+
+const patchElement = (
+	n1,
+    n2,
+    parentComponent,
+    parentSuspense,
+    isSVG,
+    optimized
+) => {
+    const el = (n2.el = n1.el)
+    const oldProps = (n1 && n1.props) || EMPTY_OBJ
+    const newProps = n2.props || EMPTY_OBJ
+    // 更新 props
+    patchProps(
+    	n1,
+        n2,
+        oldProps,
+        newProps,
+        parentComponent,
+        parentSuspense,
+        isSVG
+    )
+    const areChildrenSVG = isSVG && n2.type !== 'foreignObject'
+    // 更新子节点
+    patchChilren(
+    	n1,
+        n2,
+        el,
+        null,
+        parentComponent,
+        parentSuspense,
+        areChilrenSVG
+    )
+}
+```
+
+可以看到，更新元素的过程主要做两件事情：更新 props 和更新子节点。这很好理解，因为一个 DOM 节点元素就是由它自身的一些属性和子节点构成的。
+
+首先是更新 props，这里的 patchProps 函数就是在更新 DOM 节点的 class、style、event 以及其他的一些 DOM 属性。
+
+其次是更新子节点：
+
+```js
+const patchChildren = (
+	n1,
+    n2,
+    container,
+    anchor,
+    parentComponent,
+    parentSuspense,
+    isSVG,
+    optimized
+) => {
+    const c1 = n1 && n1.children
+    const prevShapeFlag = n1 ? n1.shapeFlag : 0
+    const c2 = n2.children
+    const { shapeFlag } = n2
+    // 子节点有 3 种可能：文本、数组、空
+    if (shapeFlag & 8 /* TEXT_CHILDREN */) {
+        if (prevShapeFlag & 16 /* ARRAY_CHILDREN */) {
+          // 数组 -> 文本，则删除之前的子节点
+          unmountChildren(c1, parentComponent, parentSuspense)
+        }
+        if (c2 !== c1) {
+          // 文本对比不同，则替换为新文本
+          hostSetElementText(container, c2)
+        }
+    } else {
+        if (prevShapeFlag & 16 /* ARRAY_CHILDREN */) {
+          // 之前的子节点是数组
+          if (shapeFlag & 16 /* ARRAY_CHILDREN */) {
+            // 新的子节点仍然是数组，则做完整地 diff
+            patchKeyedChildren(c1, c2, container, anchor, parentComponent, parentSuspense, isSVG, optimized)
+          }
+          else {
+            // 数组 -> 空，则仅仅删除之前的子节点
+            unmountChildren(c1, parentComponent, parentSuspense, true)
+          }
+        }
+        else {
+          // 之前的子节点是文本节点或者为空
+          // 新的子节点是数组或者为空
+          if (prevShapeFlag & 8 /* TEXT_CHILDREN */) {
+            // 如果之前子节点是文本，则把它清空
+            hostSetElementText(container, '')
+          }
+          if (shapeFlag & 16 /* ARRAY_CHILDREN */) {
+            // 如果新的子节点是数组，则挂载新子节点
+            mountChildren(c2, container, anchor, parentComponent, parentSuspense, isSVG, optimized)
+          }
+        }
+    }
+}
+```
+
+对于一个元素的子节点 vnode 可能会有三种情况：纯文本、vnode 数组和空。那么根据排列组合对于新旧子节点来说就有九种情况：
+
+- **旧子节点是纯文本**：
+
+  - 如果新子节点也是纯文本，那么做简单地文本替换即可；
+
+  - 如果新子节点是空，那么删除旧子节点即可；
+
+  - 如果新子节点是 vnode 数组，先把旧子节点的文本情况，再去旧子节点的父容器下添加多个新子节点
+
+    ![](../imgs/oldNode_text.png)
+
+- **旧子节点为空**：
+
+  - 如果新子节点是纯文本，那么在旧子节点的父容器下添加新文本节点即可；
+
+  - 如果新子节点也是空，那么什么都不需要做；
+
+  - 如果新子节点是 vnode 数组，那么直接去旧子节点的父容器下添加多个新子节点即可。
+
+    ![](../imgs/oldNode_emtpy.png)
+
+- **旧子节点是 vnode 数组**：
+
+  - 如果新子节点是纯文本，那么先删除旧子节点，再去旧子节点的父容器下添加新文本节点；
+
+  - 如果新子节点是空，那么删除旧子节点即可；
+
+  - 如果新子节点也是 vnode 数组，那么就需要做完整的 diff 新旧子节点了，这是最复杂的情况，内部运用了核心 diff 算法。
+
+    ![](../imgs/oldNode_arr.png)
+

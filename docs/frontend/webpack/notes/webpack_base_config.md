@@ -29,18 +29,18 @@ categories:
  - [js压缩与html压缩](./webpack_compress_htmljs.html)
 
 ## 优化配置
- - [HMR](./hot_update.html)
- - [source-map](./webpack_sourceMap.html)
- - [oneOf](./webpack_loader.html#oneof)
- - [cache](../../engineering/notes/Cache.html)
- - [tree_shaking](./treeShakingAndSideEffects.html)
- - [code_split](./webpack_CodeSplitting.html)
- - [lazy_loading](../../engineering/notes/lazyLoading.html)
- - [pwa](../../engineering/notes/PWA.html)
- - [thread](./webpack_thread.html)
- - [externals](./webpack_externals.html)
- - [dll](./webpack_dll.html)
-  
+ - [HMR](./hot_update.md)
+ - [source-map](./webpack_sourceMap.md)
+ - [oneOf](./webpack_loader.md#oneof)
+ - [cache](../../engineering/notes/Cache.md)
+ - [tree_shaking](./treeShakingAndSideEffects.md)
+ - [code_split](./webpack_CodeSplitting.md)
+ - [lazy_loading](../../engineering/notes/lazyLoading.md)
+ - [pwa](../../engineering/notes/PWA.md)
+ - [thread](./webpack_thread.md)
+ - [externals](./webpack_externals.md)
+ - [dll](./webpack_dll.md)
+
 ## 配置详解
 
 
@@ -110,3 +110,10 @@ const config = {
 module.exports = config
 ```
 
+webpack 加载资源的方式：
+
+1. 遵循 ES Modules 标准的 import 声明
+2. 遵循 CommonJS 标准的 require 函数
+3. 遵循 AMD 标准的 define 函数和 require 函数
+4. 样式代码中的 @import 指令和 url 函数
+5. HTML 代码中图片标签的 src 属性

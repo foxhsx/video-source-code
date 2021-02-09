@@ -4,7 +4,7 @@ module.exports = [
     collapsable: true,
     path: '/study/',
     children: [
-      '/study/notes/reader'
+      '/study/notes/bookToMon'
     ]
   }
 ]
