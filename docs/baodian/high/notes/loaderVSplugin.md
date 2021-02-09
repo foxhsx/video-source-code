@@ -1,5 +1,5 @@
 ---
-title：webpack中 loader 和 plugin 的区别
+title: webpack中 loader 和 plugin 的区别
 date: 2021-02-09
 tags:
  - JavaScript
