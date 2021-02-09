@@ -17,6 +17,7 @@ module.exports = [
       '/summary/notes/position_fixed',
       '/summary/notes/VSCode_svn',
       '/summary/notes/ThinkingAndSkills',
+      '/summary/notes/vuepress_appendChild',
     ]
   }
 ]
