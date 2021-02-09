@@ -40,7 +40,7 @@ categories:
  - [thread](./webpack_thread.md)
  - [externals](./webpack_externals.md)
  - [dll](./webpack_dll.md)
-  
+
 ## 配置详解
 
 
@@ -110,3 +110,10 @@ const config = {
 module.exports = config
 ```
 
+webpack 加载资源的方式：
+
+1. 遵循 ES Modules 标准的 import 声明
+2. 遵循 CommonJS 标准的 require 函数
+3. 遵循 AMD 标准的 define 函数和 require 函数
+4. 样式代码中的 @import 指令和 url 函数
+5. HTML 代码中图片标签的 src 属性
