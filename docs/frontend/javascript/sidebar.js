@@ -51,6 +51,7 @@ module.exports = [
         collapsable: true,
         children: [
           '/frontend/javascript/notes/BOM/BOM',
+          '/frontend/javascript/notes/BOM/bom_window',
         ]
       },
       {

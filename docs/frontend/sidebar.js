@@ -5,6 +5,7 @@ const webpackSideBar = require('./webpack/sidebar')
 const EngineeringSideBar = require('./Engineering/sidebar')
 const VueSideBar = require('./vue/sidebar')
 const ReactSideBar = require('./react/sidebar')
+const FlutterSideBar = require('./flutter/sidebar')
 module.exports = [
   ...htmlSideBar,
   ...cssSideBar,
@@ -13,4 +14,5 @@ module.exports = [
   ...EngineeringSideBar,
   ...VueSideBar,
   ...ReactSideBar,
+  ...FlutterSideBar
 ]
