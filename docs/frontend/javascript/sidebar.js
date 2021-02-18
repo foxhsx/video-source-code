@@ -52,6 +52,7 @@ module.exports = [
         children: [
           '/frontend/javascript/notes/BOM/BOM',
           '/frontend/javascript/notes/BOM/bom_window',
+          '/frontend/javascript/notes/BOM/bom_location',
         ]
       },
       {
