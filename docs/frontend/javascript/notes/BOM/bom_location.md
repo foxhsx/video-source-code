@@ -59,5 +59,44 @@ let getQueryStringArgs = function () {
 }
 ```
 
+现在，查询字符串中的每个参数都是返回对象的一个属性，这样使用起来就方便多了。
 
+**URLSearchParams**
 
+URLSearchParams 提供了一组标准 API 方法，通过它们可以检查和修改查询字符串。给 URLSearchParams 构造函数传入一个查询字符串，就可以创建一个实例。这个实例上暴露了 get()、set()、delete() 等方法，可以对查询字符串执行相应操作。
+
+```js
+let qs = "?q=javascript&num=10";
+
+let searchParams = new URLSearchParams(qs);
+
+alert(searchParams.toString());    // " q=javascript&num=10"
+searchParams.has("num");		  // true
+earchParams.get("num");		  	  // 10
+
+earchParams.set("page", "3");
+alert(searchParams.toString());    // " q=javascript&num=10&page=3"
+```
+
+### 操作地址
+
+可以通过修改 location 对象修改浏览器的地址。首先，最常见的是使用 assign() 方法传入一个 URL：
+
+```js
+location.assign("http://www.wrox.com")
+```
+
+这行代码会立即启动导航到新 URL 的操作，同时在浏览器历史记录中增加一条记录。如果给 location.href 或 window.location 设置一个 URL，也会以同一个 URL 值调用 assign() 方法。
+
+```js
+location.href = "http://www.wrox.com";
+window.location = "http://www.wrox.com";
+```
+
+那修改 location 对象的属性也会修改当前加载的页面。其中，hash、search、hostname、pathname和port属性被设置为新值之后都会修改当前 URL。而除了 hash 之外，只要修改 location 的一个属性，就会导致页面重新加载新 URL。**修改hash的值会在浏览器历史中增加一条新纪录，这对SPA中做前进后退很有效。**
+
+如果不吸氧增加历史记录，可以使用 replace() 方法。这个方法接收一个 URL 参数，但重新加载后不会增加历史记录。在调用 replace() 之后，用户不能回到前一页。
+
+最后一个修改地址的方法是 reload()，它能重载当前显示的页面。调用 reload() 不传参数，页面会以最有效的方式重载——如果页面上次请求以来没有修改过，浏览器可能会从缓存中加载页面。要想强制从服务器重载，可以给 reload() 传个 true。
+
+> 脚本中位于 reload() 调用之后的代码可能执行也可能不执行，这取决于网络延迟和系统资源等因素。所以，**最好把 reload() 作为最后一行代码。**
