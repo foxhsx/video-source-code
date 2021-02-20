@@ -54,6 +54,8 @@ module.exports = [
           '/frontend/javascript/notes/BOM/bom_window',
           '/frontend/javascript/notes/BOM/bom_location',
           '/frontend/javascript/notes/BOM/bom_navigator',
+          '/frontend/javascript/notes/BOM/bom_screen',
+          '/frontend/javascript/notes/BOM/bom_history',
         ]
       },
       {
