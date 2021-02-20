@@ -1,5 +1,5 @@
 ---
-history.go(2)title: BOM对象之history
+title: BOM对象之history
 date: 2021-02-20
 tags:
  - JavaScript
