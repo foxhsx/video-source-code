@@ -10,6 +10,7 @@ module.exports = [
           '/baodian/zero/JavaScript/notes/String',
           '/baodian/zero/JavaScript/notes/Cameback',
           '/baodian/zero/JavaScript/notes/loop',
+          '/baodian/zero/JavaScript/notes/Coding_first',
         ]
       }
     ]
