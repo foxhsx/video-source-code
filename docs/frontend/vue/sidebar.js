@@ -7,6 +7,7 @@ module.exports = [
       '/frontend/vue/notes/vnodeToDOM',
       '/frontend/vue/notes/diff_up',
       '/frontend/vue/notes/vue3',
+      '/frontend/vue/notes/vue3_webpack',
     ]
   }
 ]
