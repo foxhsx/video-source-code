@@ -7,6 +7,7 @@ module.exports = [
       '/frontend/react/notes/front_router',
       '/frontend/react/notes/js_router',
       '/frontend/react/notes/vscode_pluginReact',
+      '/frontend/react/notes/router_env',
     ]
   }
 ]

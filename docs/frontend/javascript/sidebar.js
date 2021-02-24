@@ -67,6 +67,16 @@ module.exports = [
           '/frontend/javascript/notes/DOM/DOM-EVENT',
         ]
       },
+      {
+        title: '客户端检查',
+        path: '/frontend/javascript/notes/ClientCheck/',
+        collapsable: true,
+        children: [
+          '/frontend/javascript/notes/ClientCheck/power_check',
+          '/frontend/javascript/notes/ClientCheck/proxy_check',
+          '/frontend/javascript/notes/ClientCheck/soft_hardware_check',
+        ]
+      },
     ]
   }
 ]

@@ -25,9 +25,10 @@ categories:
 ```js
 // 获取 view
 let view = null
+// 当初始的 HTML 文档被完全加载和解析完成之后，DOMContentLoaded 事件被触发，无需等待样式表、图像和子框架的完全加载。
 window.addEventLisenter('DOMContentLoaded', onLoad)
 
-// 监听 hash 变化
+// 监听 hash 变化，当URL的片段标识符更改时，将触发hashchange事件 (跟在＃符号后面的URL部分，包括＃符号)
 window.addEventLisenter('hashchange', onHashChange)
 
 function onLoad() {
