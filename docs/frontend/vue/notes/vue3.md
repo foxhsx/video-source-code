@@ -83,3 +83,8 @@ vue add vue-next
 - 生命周期
   - onMounted
   - onUnmounted
+
+## Custom Renderer API
+- 解决什么问题？
+  - 允许用户自定义渲染平台
+比如将代码绘制在 canvas 画布上。
