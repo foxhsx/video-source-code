@@ -11,6 +11,7 @@ module.exports = [
           '/baodian/zero/JavaScript/notes/Cameback',
           '/baodian/zero/JavaScript/notes/loop',
           '/baodian/zero/JavaScript/notes/Coding_first',
+          '/baodian/zero/JavaScript/notes/Coding_second',
         ]
       }
     ]
