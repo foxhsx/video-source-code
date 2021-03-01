@@ -88,3 +88,8 @@ vue add vue-next
 - 解决什么问题？
   - 允许用户自定义渲染平台
 比如将代码绘制在 canvas 画布上。
+  - createRenderer
+  - 接口
+    - createElement
+    - insert
+    - patchProp
