@@ -1,6 +1,6 @@
 ---
 home: true
-heroImage: /img/logo.jpg
+heroImage: /img/yoyuxi.jpg
 heroImageStyle: {
   width: '20em',
   display: block,

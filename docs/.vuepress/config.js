@@ -13,7 +13,7 @@ module.exports = {
   base: '/hsxblog/', // 设置站点根路径
   port: '8888',
   head: [
-    [ 'link', { rel: 'icon', href: '/logo.jpg' } ],
+    [ 'link', { rel: 'icon', href: '/yoyuxi.jpg' } ],
     [ 'link', { rel: 'stylesheet', href: '/css/style.css' } ],
     [ 'script', { href: '/js/main.js' } ],
     ['meta', { name: 'viewport', content: 'width=device-width,initial-scale=1,user-scalable=no' }]
@@ -56,7 +56,7 @@ module.exports = {
     editLinkText: '在 Github 上编辑此页！',
     author: 'cecil_he',
     // 右侧信息头像
-    authorAvatar: '/img/avatar.jpg',
+    authorAvatar: '/img/shehui.jpg',
     // 友链
     friendLink: [
       {
