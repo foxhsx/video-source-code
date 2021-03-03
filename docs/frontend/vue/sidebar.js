@@ -9,6 +9,7 @@ module.exports = [
       '/frontend/vue/notes/vue3',
       '/frontend/vue/notes/vue3_webpack',
       '/frontend/vue/notes/vue3_render',
+      '/frontend/vue/notes/vue3_composition',
     ]
   }
 ]
