@@ -18,6 +18,7 @@ module.exports = [
       '/summary/notes/VSCode_svn',
       '/summary/notes/ThinkingAndSkills',
       '/summary/notes/vuepress_appendChild',
+      '/summary/notes/vscode_pluginReact',
     ]
   }
 ]
