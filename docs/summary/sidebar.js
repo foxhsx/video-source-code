@@ -19,6 +19,8 @@ module.exports = [
       '/summary/notes/ThinkingAndSkills',
       '/summary/notes/vuepress_appendChild',
       '/summary/notes/vscode_pluginReact',
+      '/summary/notes/git_file',
+      '/summary/notes/page_analysis',
     ]
   }
 ]
