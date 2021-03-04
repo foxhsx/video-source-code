@@ -214,3 +214,17 @@ function render(props) {
 
 export default App;
 ```
+
+那这个时候就有问题了，每个页面都会匹配到 404，这肯定不是我们想要的结果，理想的结果是当匹配到一个页面的时候，就不渲染 404 了，怎么办呢？这个时候 Switch 组件闪亮登场：
+```js
+<Switch>
+  <Route path="/" exact component={HomePage} />
+  <Route path="/user" component={UserPage} />
+  <Route path="/login" component={LoginPage} />
+  
+  // 放在最后面
+  <Route component={_404Page} />
+</Switch>
+```
+Switch 组件就是说它会从上往下进行匹配，找到一个匹配的路由之后呢，就不再去进行匹配了，如果都没匹配，就只有到最后的 404 了。
+

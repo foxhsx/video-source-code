@@ -8,6 +8,7 @@ module.exports = [
       '/frontend/react/notes/js_router',
       '/frontend/react/notes/router_env',
       '/frontend/react/notes/router_method',
+      '/frontend/react/notes/dynamic_routing',
     ]
   }
 ]
