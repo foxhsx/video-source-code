@@ -7,7 +7,7 @@
  * @FilePath: \note\docs\.vuepress\config.js
  */
 module.exports = {
-  title: '小和尚的博客',
+  title: 'Coder杂谈',
   description: '不积跬步无以至千里',
   dest: './dist',  // 默认在 vuepress 下
   base: '/hsxblog/', // 设置站点根路径
@@ -60,23 +60,17 @@ module.exports = {
     // 友链
     friendLink: [
       {
+        title: 'zhouti-design',
+        desc: "A product designer in Xi'an.",
+        logo: "https://www.zhouti.design/favicon.ico",
+        link: 'https://www.zhouti.design'
+      },
+      {
         title: 'vuepress-theme-reco',
         desc: 'A simple and beautiful vuepress Blog & Doc theme.',
         logo: "https://vuepress-theme-reco.recoluan.com/icon_vuepress_reco.png",
         link: 'https://vuepress-theme-reco.recoluan.com'
-      },
-      {
-        title: '午后南杂',
-        desc: 'Enjoy when you can, and endure when you must.',
-        email: 'recoluan@qq.com',
-        link: 'https://www.recoluan.com'
-      },
-      {
-        title: '百变鹏仔',
-        desc: '共享博客，专注前端行业精选',
-        email: '',
-        link: 'http://sharedblog.cn/'
-      },
+      }
     ],
     plugins: ['mermaidjs'],
     activeHeaderLinks: false,
