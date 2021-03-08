@@ -23,7 +23,7 @@ categories:
 
 根据分析的结果，我们来修改一下 Map.js：
 ```js
-import { h, defineComponent, ref } from '@vue/runtime-core';
+import { h, defineComponent, ref, onMounted, onUnmounted } from '@vue/runtime-core';
 import mapImage from '@/assets/map.jpg';
 import { game } from '../Game';
 
@@ -36,7 +36,8 @@ export default defineComponent({
 
     // 无缝轮播，使用 pixi.js 中封装的事件循环 ticker，实现 interval
     const speed = 5;  // 速度
-    game.ticker.add(() => {
+
+    const moveLoop = () => {
       mapY1.value += speed;
       mapY2.value += speed;
 
@@ -46,7 +47,14 @@ export default defineComponent({
       if (mapY2.value >= viewHeight) {
         mapY2.value = -viewHeight
       }
-    })
+    }
+    onMounted() {
+      game.ticker.add(moveLoop)
+    }
+    
+    onUnmounted() {
+      game.ticker.remove(moveLoop)
+    }
 
     return {
       mapY1,
@@ -73,6 +81,8 @@ ref 这里是做响应式数据处理，Vue3 中再没有 data 去处理响应�
 入口函数中将设置的响应式数据 return 出去，这样可以将数据挂载到 ctx 上，并在 render 中去使用。
 
 此时属于地图组件的无缝轮播效果就做好了。
+
+当然，我们在这里最好是加上一些优化，比如进入到地图页面时，地图再进行无缝滚动的效果，而当离开时，清除掉无缝滚动效果，释放内存。
 
 ## 我方飞机
 接下来就是在地图上添加我方战机进去。
@@ -216,7 +226,106 @@ export default defineComponent({
 此时当我们按下键盘的上下左右时，就会控制飞机在地图上的移动。
 
 ## 敌方飞机
-现在我方飞机有了，那还得有敌方飞机，实现方法和思路都有一样的，不同的是，敌方飞机不需要我们去操控，而是在创建后，自动向下移动。所以也不用在父组件传递值进去：
+现在我方飞机有了，那还得有敌方飞机，实现方法和思路都有一样的，不同的是，敌方飞机不需要我们去操控，而是在创建后，自动向下移动。
 ```js
+// ./EnemyPlane.js
 
+import { h, defineComponent, toRefs } from '@vue/runtime-core';
+import enemyPlaneImg from '@/assets/enemy.png';
+
+export default defineComponent({
+  props: ['x', 'y'],
+  setup(props) {
+    const { x, y } = toRefs(props)
+
+    return {
+      x, y
+    }
+  }
+  render({ x, y }) {
+    return h("Container", {
+      x,
+      y
+    }, [
+      h("Sprite", {
+        texture: enemyPlaneImg
+      })
+    ])
+  }
+})
 ```
+
+在父组件中引用，并将下移逻辑添加到里面：
+```js
+// ./GamePage.js
+import { h, defineComponent, reactive, onMounted, onUnmounted } from '@vue/runtime-core';
+import EnemyPlane from './EnemyPlane.js';
+import { game } from './Game';
+
+export default defineComponent({
+  
+
+  function useCreateEnemyPlanes() {
+    const enemyPalnes = reactive([
+      {
+        x: 50,
+        y: 0,
+        width: 308,
+        height: 207
+      }
+    ])
+    return enemyPalnes
+  }
+
+  // 我们可以将敌我双方的逻辑写到一个回调中，先将其称之为战斗逻辑
+  function useFighting(enemyPalnes) {
+    const handlerTicker = () => {
+      enemyPalnes.forEach((enemyPlane) => {
+        enemyPlane.y++
+      })
+    }
+
+    // 在页面渲染后执行定时
+    onMounted() {
+      game.ticker.add(handlerTicker)
+    }
+
+    // 在页面销毁时清掉定时,释放内存
+    onUnmounted() {
+      game.ticker.remove(handlerTicker)
+    }
+  }
+
+  setup() {
+    const enemyPalnes = useCreateEnemyPlanes()
+
+    return {
+      enemyPalnes
+    }
+  }
+  render(ctx) {
+    const createEnemyPlanes = () => {
+      return ctx.enemyPalnes.map(enemyPlaneInfo => {
+        return h(EnemyPlane, { x: enemyPlaneInfo.x, y: enemyPlaneInfo.y })
+      })
+    }
+
+    return h("Container", [
+      ...createEnemyPlanes()
+    ])
+  }
+})
+```
+
+这样就把敌方飞机向下移动的效果完成了，并且在离开这个页面时，会销毁下移的定时，保证了应用程序的垃圾回收机制，不会造成内存泄露。
+
+## 碰撞检测
+重头戏来了，我方飞机有了，敌方飞机也有了，如何判断他们相撞呢？
+
+我们先假设不相撞的情况，敌军飞机我们简称D，我方飞机我们简称S：
+1. D 的 x 坐标加 D 的宽度小于 S 的 x 坐标；
+2. D 的 y 坐标加 D 的高度小于 S 的 y 坐标；
+3. S 的 x 坐标加 S 的高度小于 D 的 x 坐标；
+4. S 的 y 坐标加 S 的高度小于 D 的 y 坐标；
+
+![](../imgs/hit_test.png)
