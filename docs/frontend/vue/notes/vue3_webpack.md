@@ -39,7 +39,7 @@ const Counter = {
 createApp(Counter).mount('#app')
 ```
 
-## 2、[Vue warn]: Component provided template option but runtime compilation is not supported in this build of Vue. Configure your bundler to alias "vue" to "vue/dist/vue.esm-bundler.js". at <App>
+## 2、[Vue warn]: Component provided template option but runtime compilation is not supported in this build of Vue. Configure your bundler to alias "vue" to "vue/dist/vue.esm-bundler.js". at
 打开打包后的 html 文件，发现写的 vue 相关代码并没有执行，但是页面也没有报错，只是抛出了一个警告：`[Vue warn]: Component provided template option but runtime compilation is not supported in this build of Vue. Configure your bundler to alias "vue" to "vue/dist/vue.esm-bundler.js". at <App>`。
 其实这段报错的意思就很明显：`[Vue warn]：组件提供了模板选项，但此版本的Vue不支持运行时编译。将捆绑程序配置为别名“vue”到“vue/dist”/vue.esm公司-捆绑机.js"`。那此时我们按照报错信息内容对 Vue 进行别名配置:
 ```js
