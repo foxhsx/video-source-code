@@ -9,6 +9,7 @@ module.exports = [
       '/frontend/react/notes/router_env',
       '/frontend/react/notes/router_method',
       '/frontend/react/notes/dynamic_routing',
+      '/frontend/react/notes/handle_browser_router',
     ]
   }
 ]

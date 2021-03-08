@@ -1,5 +1,5 @@
 ---
-title: 动态路由
+title: React-动态路由与嵌套路由
 date: 2021-03-04
 tags:
  - JavaScript
@@ -7,6 +7,9 @@ tags:
 categories:
  - front
 ---
+
+## 动态路由
+
 啥是动态路由？
 
 这个问题看似很白痴，但是它就是这么简单——动态路由就是路由是动态的。它后面可以拼接动态参数，可以是 123，也可以是 abc。
@@ -39,5 +42,38 @@ function UserPage(props) {
   console.log('我是id', props.match.params.id)
   const { id } = props.match.params
   return <div>UserId：{ id } </div>
+}
+```
+
+## 嵌套路由
+
+Route 组件嵌套在其他页面组件中就产生了嵌套关系。
+
+比如：
+```js
+// ./ Prouduct.js
+import React, { Component } from 'react';
+import { BrowserRouter as Route, Link } from 'react-router-dom'
+
+export default class Product extends Component{
+  constructor(props) {
+    super(props)
+  }
+  render() {
+    const { match } = this.props
+    const { url } = match
+    const { id } = match.params
+    return (
+      <div>
+        Product: { id }
+        <Link to={ `${url}/detail` }>详情</Link>
+        <Route path={ `${url}/detail` } component={Detail} />
+      </div>
+    )
+  }
+}
+
+function Detail(props) {
+  return <div>Detail</div>
 }
 ```
