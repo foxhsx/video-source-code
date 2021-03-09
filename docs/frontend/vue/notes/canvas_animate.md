@@ -329,3 +329,365 @@ export default defineComponent({
 4. S 的 y 坐标加 S 的高度小于 D 的 y 坐标；
 
 ![](../imgs/hit_test.png)
+
+以上四种状态都为 true 时表示敌我双方的飞机没有发生碰撞，我方飞机此时大喊：莫挨老子😒！！。
+
+那我们在这种情况下取反——敌我双方飞机发生了碰撞，我们新建一个 utils 文件夹，里面新建一个 index.js 用来做碰撞检测：
+```js
+// ./utils/index.js
+
+export const hitTestObject = (objA, objB) => {
+  // 找出所有没有碰撞的结果
+  // 然后取反
+  // 就得出碰撞上的结果
+
+  return (
+    objA.x + objA.width >= objB.x &&
+    objA.y + objA.height >= objB.y &&
+    objB.x + objB.width >= objA.x &&
+    objB.y + objB.height >= objA.y
+  )
+}
+```
+
+写好碰撞检测算法之后，我们在 GamePage 中去使用一下，在战斗逻辑 `useFighting` 函数中调用：
+```js
+import { hitTestObject } from  './utils/index'
+
+function useFighting(enemyPlanes, planeInfo, emit) {
+  const handlerTicker = () => {
+    // 游戏主循环
+    enemyPlanes.forEach((enemyPlaneInfo) => {
+      // y 坐标递增，飞机向下移动
+      enemyPlaneInfo.y++
+
+      // 调用碰撞检测
+      if (hitTestObject(enemyPlaneInfo, planeInfo)) {
+        // 游戏结束
+        emit("changePage", "EndPage")
+      }
+    })
+  }
+}
+```
+
+当 hitTestObject 方法返回 true 的时候，说明敌我双方飞机发生了碰撞。此时我们传递一个信息到父组件，告知父组件撞机了，要跳转到结束页面。在父组件接收子组件传递的消息时，需要使用 on 来进行拼接，并将 on 后面的第一个字母大写，也就是在父组件中，我们接收 emit 传递出来的值时，需要使用类似 `onChangePage` 这种方式。
+
+这里我们在父组件中通过改变 string 来实现组件切换。
+
+首先定义一个初始变量，用来做判断逻辑的条件，初始值为 StartPage。
+
+然后通过改变这个变量，触发判断逻辑的代码块，这里还需要使用 computed 计算属性来创建一个新的变量，而这个变量才是真正要去渲染的组件。
+
+```js
+// ./App.js
+
+import { h, defineComponent, ref, computed } from '@vue/runtime-core'
+import StartPage from './StartPage'
+import EndPage from './EndPage'
+
+export default defineComponent({
+  setup(props, ctx) {
+    let currentPageName = ref('StartPage')
+
+    const currentPage = computed(() => {
+      if (currentPageName === 'StartPage') {
+        return StartPage
+      } else if (currentPageName === 'EndPage') {
+        return EndPage
+      }
+    })
+
+    return {
+      currentPage,
+      currentPageName
+    }
+  }
+  render(ctx) {
+    return h("Container", [
+      h(ctx.currentPage, {
+        onChangePage(page) {
+          ctx.currentPageName = page
+        }
+      })
+    ])
+  }
+})
+```
+
+这样在检测到敌我飞机发生碰撞之后，就可以完成组件切换的效果，从而跳转到结束页面。
+
+结束页面跟开始页面很相似：
+```js
+// ./EndPage
+
+import { h, defineComponent } from '@vue/runtime-core';
+import endPageImg from '../../assets/end_page.jpg';
+import restartBtnImg from '../../assets/restartBtn.png';
+
+export default defineComponent({
+  setup(props, ctx) {
+    const onClick = () => {
+      ctx.emit('changePage', 'GamePage')
+    }
+
+    return {
+      onClick
+    }
+  },
+  render(ctx) {
+    return h("Container", [
+      h("Sprite", {
+        texture: endPageImg
+      }),
+      h("Sprite", {
+        texture: restartBtnImg,
+        width: 228,
+        height: 515,
+        interactive: true,  // 点击事件开关
+        onClick: ctx.onClick
+      })
+    ])
+  }
+})
+```
+
+emit 出去的消息被父组件拿到之后会继续触发我们之前说到的切换组件逻辑。
+
+当当当~，飞机和碰撞都完成之后，开始发射炮弹了，同志们！
+
+## 我方子弹
+对于子弹，我方子弹是逻辑是，按下空格后发射一枚，发射方向向上，发射位置跟随我方飞机的位置，向上的过程中碰到敌方子弹和飞机时，销毁自身和碰撞到的敌机或敌弹。
+
+所以对于我方子弹的产生是这样的：
+1. 有一个产生子弹的方法；
+2. 监听键盘按键，按下空格调用一次方法，产生子弹；
+3. 子弹产生位置为当前飞机正中心；
+4. 子弹产生后向上移动
+5. 移动过程碰撞到敌方飞机及子弹后，碰撞双方同时销毁
+
+我们根据上述顺序，先新建一个 Bullets.js 文件：
+```js
+// ./Bullets.js
+
+import { h, defineComponent, toRefs } from '@vue/runtime-core';
+import bulletImg from '../../assets/bunny-self.png'
+
+export default defineComponent({
+  setup(props, ctx) {
+    // 我们使用 toRefs 来解决解构之后产生的响应式丢失问题
+    const { x, y } = toRefs(props)
+
+    return {
+      x, y
+    }
+  },
+  render({ x, y }) {
+    return h("Container", {
+      x,
+      y
+    }, [
+      h("Sprite", {
+        texture: bulletImg
+      })
+    ])
+  }
+})
+```
+
+现在咱们已经完成了创建子弹的部分，接收一个从父组件传递过来的坐标，用来作为子弹创建时的坐标位置。而这里父组件的坐标，又是从我方飞机组件里通过监听 keydown 事件传递出去的。
+```js
+// ./Plane.js
+import { h, defineComponent, toRefs } from '@vue/runtime-core';
+import planeImg from '../../assets/plane.png'
+
+export default defineComponent({
+  props: ['x', 'y'],
+  setup(props, ctx) {
+    const { x, y } = toRefs(props)
+
+    // 监听键盘 keydown 事件，空格发射子弹，并传递当前飞机坐标
+    window.addEventListener("keydown", (e) => {
+      if (e.code === 'Space') {
+        // 发射子弹
+        ctx.emit("attack", {
+          x: x.value + 100,
+          y: y
+        })
+      }
+    })
+
+    return {
+      x, y
+    }
+  },
+  render({ x, y }) {
+    return h("Container", {
+      x,
+      y
+    }, [
+      h("Sprite", {
+        texture: planeImg
+      })
+    ])
+  }
+})
+```
+此时，已经监听了键盘的 keydown 事件，接下来我们到父组件中去使用子弹的组件。
+
+我们在战斗逻辑里面，也加上子弹产生后移动以及碰撞的效果：
+```js
+// ./GamePage.js
+import { h, defineComponent, onMounted, onUnmounted, reactive } from '@vue/runtime-core';
+import Plane from './Plane'
+import Bullet from './Bullet'
+import EnemyPalne from './EnemyPalne'
+import { hitTestObject } from './utils/index'
+import { game } from './Game';
+
+export default defineComponent({
+  setup(props, { emit }) {
+    // 我方飞机
+    const planeInfo = usePlaneInfo()
+
+    // 敌方飞机
+    const enemyPlanes = useEnemyPlanes()
+
+    // 我方子弹
+    const { bullets, addBullet } = useCreateBullets()
+
+    // 战斗逻辑
+    useFighting(enemyPlanes, bullets, planeInfo, emit)
+
+    // 发射子弹函数
+    const onAttack = (bulletInfo) => {
+      addBullet(bulletInfo)
+    }
+
+    return {
+      planeInfo,
+      enemyPlanes,
+      bullets,
+      onAttack
+    }
+  },
+  render(ctx) {
+
+    // 创建敌方
+    const createEnemyPlanes = () => {
+      return ctx.enemyPlanes.map((enemyPlaneInfo) => {
+        return h(EnemyPalne, { x: enemyPlaneInfo.x, y: enemyPlaneInfo.y })
+      })
+    }
+    // 创建我方子弹
+    const createSelfBullets = () => {
+      return ctx.bullets.map((info) => {
+        return h(Bullet, { x: info.x, y: info.y })
+      })
+    }
+
+    return h("Container", [
+      h(Plane, {
+        x: ctx.planeInfo.x,
+        y: ctx.planeInfo.y,
+        onAttack: ctx.onAttack
+      }),
+      ...createEnemyPlanes(),
+      ...createSelfBullets()
+    ])
+  }
+})
+
+function usePlaneInfo() {
+  const planeInfo = reactive({ x: 150, y: 450, width: 258, height: 364 })
+
+  const speed = 15;
+  window.addEventListener("keydown", (e) => {
+    switch(e.code) {
+      case "ArrowUp":
+        planeInfo.y -= speed;
+        break;
+      case "ArrowDown":
+        planeInfo.y += speed;
+        break;
+      case "ArrowLeft":
+        planeInfo.x -= speed;
+        break;
+      case "ArrowRight":
+        planeInfo.x += speed;
+        break;
+      default:
+        break;
+    }
+  })
+
+  return planeInfo
+}
+
+function useEnemyPlanes() {
+  const enemyPlanes = reactive([
+    {
+      x: 50,
+      y: 0,
+      width: 308,
+      height: 207
+    }
+  ])
+
+  return enemyPlanes
+}
+
+function useCreateBullets() {
+  const bullets = reactive([])
+
+  const addBullte = (info) => {
+    bullets.push({...info, width: 61, height: 99 })
+  }
+
+  return { bullets, addBullte }
+}
+
+function useFighting(enemyPlanes, bullets, planeInfo, emit) {
+  const handleTicker = () => {
+    enemyPlanes.forEach((enemyPlane, enemyIndex) => {
+      // 敌方飞机向下移动
+      enemyPlane.y++
+
+      // 碰撞检测算法，矩形碰撞算法（不严谨）
+      if (hitTestObject(enemyPlane, planeInfo)) {
+        // 碰撞后切换到结束页面
+        emit("changePage", "EndPage")
+      }
+      
+      // 我方子弹和敌方飞机碰撞检测
+      bullets.forEach((bullet, bulletIndex) => {
+        if (hitTestObject(bullet, enemyPlane)) {
+          // 直接在数组中删除这一项
+          bullets.splice(bulletIndex, 1)
+          enemyPlanes.splice(enemyIndex, 1)
+        }
+      })
+    })
+
+    // 移动我方子弹
+    bullets.forEach((bullet) => {
+      bullet.y--
+    })
+  }
+
+  // 组件渲染后开始移动并检测碰撞
+  onMounted() {
+    game.ticker.add(handleTicker)
+  }
+
+  // 组件离开后将这个 定时器要移除掉，利于垃圾回收
+  onUnmounted() {
+     game.ticker.remove(handleTicker)
+  }
+}
+```
+
+以上就完成了基础的飞机大战的架子，接下来我们继续优化和完善它。
+
+## 敌方飞机子弹
+在完成我方飞机子弹之后，我们再做出敌方飞机子弹来，逻辑和我方子弹类似，少了手动发射，而成为了自动发射，方向为下移。
