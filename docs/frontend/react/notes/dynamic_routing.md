@@ -77,3 +77,5 @@ function Detail(props) {
   return <div>Detail</div>
 }
 ```
+
+

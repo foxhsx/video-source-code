@@ -171,10 +171,15 @@ export default function Link (/* props 解构 */{ to, children, ...restProps }) 
 ```
 
 当然，我们不光是要关注 Link，还需要关注 Route，当 location 发生变化时，我们需要实时去改变对应的组件，那这就需要接收到从 RouterContext.Provider 传递下来的 location 了。
+
+此时为了更切合实际 router 的功能，这里的 match 也需要更改，这个简陋的 match 已经不能满足我们的需求了。
+
+偷个懒将源码中的 matchPath.js 复制过来，然后直接调用。
 ```js
 // ./Route
 import React, { Component } from 'react'
 import { RouterContext } from './RouterContext'
+import { matchPath } from './matchPath'
 
 export default class Route extends Component {
   render () {
@@ -182,13 +187,23 @@ export default class Route extends Component {
       {
         context => {
           const { location } = context;
-          const { path, component } = this.props;
-          const match = location.pathname === path;  // 是否匹配
+          const { path, component, children, render } = this.props;
+          const match = matchPath(location.pathname, this.props)  // 是否匹配
+          const props = { ...context, location, match }
           /**
            * 匹配时：children >  component > render > null
            * 不匹配时：children && typeof children === 'function' > null
           */
-          return match ? React.createElement(component) : null
+          return match
+            ? children
+              ? (typeof children === 'function' ? children(props): children)
+              : component
+                ? React.createElement(component, props)
+                : render
+                  ? render(props)
+                  : null
+            : typeof children === 'function' ? children(props) : null
+
         }
       }
     </RouterContext.Consumer>
@@ -212,3 +227,4 @@ export default class BrowserRouter extends Component {
   }
 }
 ```
+
