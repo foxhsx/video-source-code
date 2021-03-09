@@ -9,7 +9,18 @@ categories:
 ---
 我们来手动实现一下 BrowserRouter、Router、Route 和 Link。
 
-首先我们在项目 src 目录中新建一个文件夹 `react-router-dom-nut`，然后在里面创建一个 BrowserRouter.js：
+首先我们在项目 src 目录中新建一个文件夹 `react-router-dom-nut`。
+
+## 基础框架
+
+- BrowserRouter
+- Route
+- Link
+- Router
+- RouterContext
+
+在里面创建一个 BrowserRouter.js，它的本质实际上就是渲染子组件，所以我们这里只需要 return 掉 props 中的 chilren 即可。：
+
 ```js
 import React, { Component } from 'react'
 
@@ -19,9 +30,7 @@ export default class BrowserRouter extends Component {
   }
 }
 ```
-那它的本质实际上就是渲染子组件，所以我们这里只需要 return 掉 props 中的 chilren 即可。
-
-接下来就是 Link.js：
+接下来就是 Link.js，直接返回一个 a 标签，然后将传进来的属性赋值即可。
 ```js
 import React from 'react'
 
@@ -31,8 +40,6 @@ export default function Link (/* props 解构 */{ to, children, ...restProps }) 
   }
 }
 ```
-这个也很简单了，直接返回一个 a 标签，然后将传进来的属性赋值即可。
-
 再然后是 Route.js，这个组件实际就是做了 props 的传递：
 ```js
 import React, { Component } from 'react'
@@ -59,25 +66,8 @@ export {
 }
 ```
 
-现在基础架子我们已经搭建起来了，接下来就是去挨个儿优化它们，让其逐渐丰满起来。
+Router.js 的主要作用其实是用作一个抽象类来使用的，因为之前说过除了 BrowserRouter 还有 HashRouter 等，本质上都是基于 Router 的，都是将逻辑抽象到 Router 中去，只是在往里面传入不同的 history 参数而已。
 
-## BrowserRouter
-```js
-import React, { Component } from 'react'
-import { createBrowserHistory } from 'history'
-
-export default class BrowserRouter extends Component {
-  constructor(props) {
-    super(props)
-    this.history = createBrowserHistory()  // 创建 history 对象
-  }
-  render () {
-    return this.props.children
-  }
-}
-```
-
-那之前说过除了 BrowserRouter 还有 HashRouter 等，那本质上都是基于 Router 的，都是把逻辑都放到 Router 里去，只是说 history 这个参数不同。那这样的话我们可以再新建一个 Router.js：
 ```js
 // ./Router.js
 import React, { Component } from 'react'
@@ -92,10 +82,11 @@ export default class Router extends Component{
   }
 }
 ```
-此时有一个问题是，我们如何将 Router 中的数据传递到 Link 和 Route 等组件中去？由于不知道嵌套层级，所以也不能冒然使用 props 去传递。但是有一点是我们可以确定的，那就是 Link 和 Route 都是 Router 的子组件，既然如此，我们可以考虑使用数据的跨层级传递来实现。
 
-再新建一个 RouterContext.js：
+此时有一个问题是，我们如何将 Router 中的数据传递到 Link 和 Route 等组件中去？由于不知道嵌套层级，所以也不能冒然使用 props 去传递。但是有一点是我们可以确定的，那就是 Link 和 Route 都是 Router 的子组件，既然如此，我们可以考虑使用数据的跨层级传递来实现——RouterContext.js：
+
 ```js
+// RouterContext.js
 import React from 'react';
 
 // 使用 context 对象做数据跨层级传递
@@ -108,7 +99,8 @@ export const RouterContext = React.createContext()
 // 三种方式：Consumer、useContext、contextType
 ```
 
-修改一下 Router.js，对应我们说的第二步：
+这样的话，我们在 Router 中将 value 传递下去，而 value 中是需要传递的值，通过 RouterContext.Provider 来接收传进来的 props，并将 history 传递下去。location 也是如此，我们这里将 location 传递下去主要是为了在监听路由变化之后，更新对应组件内容。：
+
 ```js
 // ./Router.js
 import React, { Component } from 'react'
@@ -148,9 +140,9 @@ export default class Router extends Component{
   }
 }
 ```
-通过 RouterContext.Provider 来接收传进来的 props，并将 history 传递下去。location 也是如此，我们这里将 location 传递下去主要是为了在监听路由变化之后，更新对应组件内容。
 
 那接下来，就可以在对应的子组件中去使用了，比如我们在 Link.js 中去使用：
+
 ```js
 // ./Link
 import React from 'react'
@@ -171,6 +163,24 @@ export default function Link (/* props 解构 */{ to, children, ...restProps }) 
 ```
 
 当然，我们不光是要关注 Link，还需要关注 Route，当 location 发生变化时，我们需要实时去改变对应的组件，那这就需要接收到从 RouterContext.Provider 传递下来的 location 了。
+
+## BrowserRouter
+```js
+import React, { Component } from 'react'
+import { createBrowserHistory } from 'history'
+
+export default class BrowserRouter extends Component {
+  constructor(props) {
+    super(props)
+    this.history = createBrowserHistory()  // 创建 history 对象
+  }
+  render () {
+    return this.props.children
+  }
+}
+```
+
+---以下会更改---
 
 此时为了更切合实际 router 的功能，这里的 match 也需要更改，这个简陋的 match 已经不能满足我们的需求了。
 
