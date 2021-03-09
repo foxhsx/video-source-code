@@ -17,7 +17,6 @@ module.exports = {
     [ 'link', { rel: 'stylesheet', href: '/css/style.css' } ],
     [ 'script', { href: '/js/main.js' } ],
     ['meta', { name: 'viewport', content: 'width=device-width,initial-scale=1,user-scalable=no' }],
-    ['meta', { name: 'description', content: '擅长vuejs,javascript,工具,等方面的知识,关注Vue.js,Node.js,面试,JavaScript,ECMAScript 6,TypeScript,前端框架,WebPack,Flutter,小程序,React.js领域.' }]
   ],
   markdown: {
     lineNumbers: true

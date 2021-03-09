@@ -228,3 +228,96 @@ export default class BrowserRouter extends Component {
 }
 ```
 
+那现在基本的功能我们已经可以实现了，但是还有一个 404 页面没有实现，我们来实现一下 404 页面：
+
+1. 首先就是 404 页面是没有传 path 值的，这样的话在 Route.js 中是没有 path 的；
+
+2. 使用其父级 context 里面的 match，那父级就应该传递一个 match 下去。
+
+3. 父级传递一个默认的 match：
+
+   ```js
+   // ./Router.js
+   class Router extends React.Component {
+       static computeRootMatch(pathname) {
+           return { path: "/", url: "/", params: {}, isExact: pathname === "/" }
+       }
+       ...
+       render() {
+           return (
+           	<RouterContext.Provider
+               	value={
+               	  {
+               		history: this.props.history,
+               		location: this.state.location,
+               		match: Router.computeRootMatch(this.state.location.pathname)
+                     }
+                 }
+               >
+               	{ this.props.children }
+               </RouterContext.Provider>
+           )
+       }
+   }
+   ```
+
+4. 然后再到 Route.js 中去，改一下 match 那块的表达式——有 path 时，执行 matchPath，没有 path 时，则使用传递下来的 match：
+
+   ```js
+   const match = path ? matchPath(location.pathname, this.props) : context.match;
+   ```
+
+   最终 404 页面会始终显示在页面中。
+
+最后我们来实现一下 switch 独占路由（毕竟404还一直在页面中顽强的展示）：
+
+```js
+// ./react-router-dom-nut/Switch.js
+import React, { Component } from 'react'
+
+export default class Switch extends Component {
+    render() {
+        return (
+        	<RouterContext.Consumer>
+            	{
+                    context => {
+                    	const location = this.props.location || context.location
+                    	let match;  // 是否匹配
+                    	let element;  // 匹配到元素
+                    	
+                    	React.Children.forEach(this.props.children, child => {
+                    		if (match == null && React.isValidElement(child)) {
+            					element = child;
+            					const { path } = child.props;
+            					match = path
+            					  ? matchPath(location.pathname, child.props)
+            					  : context.match
+        					}
+                		})
+                    	return match ? React.cloneElement(element, { computedMatch: match }):null;
+                	}
+                }
+            </RouterContext.Consumer>
+        )
+    }
+}
+```
+
+做完这些之后，我们再回到 Route 中，取出 props 中的 computedMatch 属性：
+
+```js
+const {
+    path,
+    children,
+    component,
+    render,
+    computedMatch
+} = this.props
+
+// 如果有 computedMatch 就使用 computedMatch，没有的话，按正常逻辑
+const match = computedMatch ? computedMatch : path ? matchPath(location.pathname, this.props)
+  : context.match;
+```
+
+
+
