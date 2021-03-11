@@ -13,6 +13,7 @@ module.exports = [
           '/baodian/zero/JavaScript/notes/Coding_first',
           '/baodian/zero/JavaScript/notes/Coding_second',
           '/baodian/zero/JavaScript/notes/Coding_third',
+          '/baodian/zero/JavaScript/notes/Coding_4',
         ]
       }
     ]

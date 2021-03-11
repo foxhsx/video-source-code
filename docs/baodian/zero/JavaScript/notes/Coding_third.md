@@ -132,12 +132,92 @@ for (let i = 0; i < 3; i++) {
 ![](../imgs/setTimeout_log.png)
 
 而第二个循环中使用 let 关键字定义变量 i，此时的 i 是具有作用域的，每次循环时，i 将被创建为一个新值，且每个值都会存在于循环内的块级作用域。
+
+![](../imgs/let_setTimeout.png)
+
 :::
 
-## 7、
+## 7、下面代码输出什么？
 
-## 8、
+```js
+const sum = eval('10*10+5')
+```
 
-## 9、
+::: tip 参考答案
 
-## 10、
+105
+
+
+
+eval 会为字符串传递的代码求值。如果它是一个表达式，那么它就会计算表达式。因此 10 * 10 + 5 计算得到 105。
+
+:::
+
+## 8、请输出下面代码结果
+
+```js
+(() => {
+    let x = (y = 10)
+})()
+
+console.log(typeof x);
+console.log(typeof y);
+```
+
+::: tip 参考答案
+
+undefined  number
+
+
+
+首先使用 let 关键字声明变量 x 是定义在函数体内的局部变量，它只作用于块级作用域，故而当在外面访问 x 时，是访问不到的，typeof 返回 undefined。
+
+而 y 在这里相当于是给全局对象 window 增加了一个 y 属性，成为了全局变量，所以当我们访问 y 时，typeof 返回 number。
+
+`let x = (y = 10)` 其实是下面这段代码的缩写：
+
+```js
+var y;
+y = 10;
+let x = y;
+```
+
+:::
+
+## 9、可以访问多长时间？
+
+```js
+seesionStorage.setItem('long', 123)
+```
+
+::: tip 参考答案
+
+用户关闭选项卡时
+
+
+
+关闭选项卡后，将删除存储在 sessionStorage 中的数据。
+
+:::
+
+## 10、请输出下面代码结果
+
+```js
+function Car() {
+    this.make = 'Lamborghini';
+    return { make: 'Maserati' };
+}
+
+const myCar = new Car();
+console.log(myCar.make);
+```
+
+::: tip 参考答案
+
+Maserati
+
+
+
+返回属性的时候，属性的值就是返回值，而不是构造函数中设定的值，所以在这里返回了字符串 'Maserati'，所以 `myCar.make` 等于 'Maserati'。
+
+:::
