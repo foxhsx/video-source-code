@@ -114,9 +114,25 @@ Added a new property! Accessed a property!
 ## 6、请输出下面代码结果
 ```js
 for (var i = 0; i < 3; i++) {
-  
+  setTimeout(() => console.log(i), 1);
+}
+
+for (let i = 0; i < 3; i++) {
+  setTimeout(() => console.log(i), 1);
 }
 ```
+
+::: tip 参考答案
+3 3 3 and 0 1 2
+
+根据 JavaScript 的事件执行机制，当 setTimeout 函数真正被执行时，循环已经走完。
+
+那么第一个循环中使用 var 关键字定义变量 i，此时该值是全局的。在循环期间，每循环一次该值递增一次，循环完之后该值为 3，然后再去调用 setTimeout 函数时，打印出来三个 3。
+
+![](../imgs/setTimeout_log.png)
+
+而第二个循环中使用 let 关键字定义变量 i，此时的 i 是具有作用域的，每次循环时，i 将被创建为一个新值，且每个值都会存在于循环内的块级作用域。
+:::
 
 ## 7、
 
