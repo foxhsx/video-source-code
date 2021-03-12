@@ -21,6 +21,7 @@ module.exports = [
       '/summary/notes/vscode_pluginReact',
       '/summary/notes/git_file',
       '/summary/notes/page_analysis',
+      '/summary/notes/windows_cmd',
     ]
   }
 ]

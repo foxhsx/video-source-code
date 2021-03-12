@@ -691,3 +691,498 @@ function useFighting(enemyPlanes, bullets, planeInfo, emit) {
 
 ## 敌方飞机子弹
 在完成我方飞机子弹之后，我们再做出敌方飞机子弹来，逻辑和我方子弹类似，少了手动发射，而成为了自动发射，方向为下移。
+
+我们为了方便，可以将敌方子弹和我方子弹公用同一个类来实现，只是在方向和图片路径上根据敌我双方的不同而不同。这里修改一下 Bullets.js，将其作为一个抽象类出来，里面主要用作初始化子弹属性和渲染，不作任何逻辑：
+```js
+// ./Bullets.js
+import { h, defineComponent, toRefs } from '@vue/runtime-core'
+import bulletImg from '../../assets/bunny-self.png'
+import bunnyImagePath from "../../assets/bunny.png";
+
+export const SelfBulletInfo = {
+  width: 61,
+  height: 99,
+  rotation: 0,  // 是否转动角度
+  dir: -1
+}
+
+export const EnemyBulletInfo = {
+  width: 61,
+  height: 99,
+  rotation: 0,  // 是否转动角度
+  dir: 1
+}
+
+export default defineComponent({
+  props: ['x', 'y', 'rotation', 'dir', 'id'],
+  setup(props, ctx) {
+    const { x, y, rotation, dir } = toRefs(props)
+
+    return {
+      x,
+      y,
+      rotation,
+      dir
+    }
+  },
+  render({ x, y, rotation, dir }) {
+    return h("Sprite", {
+      x,
+      y,
+      rotation,
+      texture: dir === 1 ? bunnyImagePath: bulletImg
+    })
+  }
+})
+```
+
+这样的话，我们只需要从父组件传入对应的属性即可。
+
+这样我们再回到父组件 GamePage.js 中，来创建我方子弹和敌方子弹，我方子弹是挂在我方飞机上的，敌方子弹是挂在敌方飞机上的，所以还有这俩飞机的逻辑：
+```js
+// ./GamePage.js
+import {
+  h,
+  defineComponent,
+  reactive,
+  onMounted,
+  onUnmounted,
+} from "@vue/runtime-core";
+import Plane, { PlaneInfo } from "../component/Plane";
+import EnemyPalne, { enemyPlaneInfo } from "../component/EnemyPalne";
+import Bullet, { SelfBulletInfo, EnemyBulltInfo } from "../component/Bullet";
+
+// 定义一个简易版的 hash 值，用来标记 子弹id 和 敌方飞机 Id
+let hashCode = 0;
+const createHashCode = () => {
+  return hashCode++
+}
+
+export default defineComponent({
+  steup(props, ctx) {
+    // 创建我方飞机
+    const planeInfo = usePlaneInfo();
+    // 我方子弹
+    const { bullets, addBullet, destorySelfBullet } = useCreateBulltes();
+    // 敌方子弹
+    const { enemyBullets, addEnemyBullet } = useCreateEnemyBulltes();
+
+    // 发射子弹函数
+    const onAttack = (bulletInfo) => {
+      addBullet(bulletInfo.x, bulletInfo.y);
+    };
+
+    return {
+      bullets,
+      enemyBullets,
+      addEnemyBullet
+    }
+  },
+  render(ctx) {
+    // 创建敌方
+    const createEnemyPlanes = (info, index) => {
+      return h(EnemyPalne, {
+        key: 'EnemyPlane' + index,
+        x: info.x,
+        y: info.y,
+        width: info.width,
+        height: info.height,
+        onAttack({ x, y }) {
+          ctx.addEnemyBullet(x, y)
+        }
+      });
+    };
+
+    // 创建我方子弹和敌方子弹
+    const createBullets = (info) => {
+      return h(Bullet, {
+        key: 'Bullet' + info.id,
+        x: info.x,
+        y: info.y,
+        id: info.id,
+        width: info.width,
+        height: info.height,
+        rotation: info.rotation,
+        dir: info.dir,
+        onDestory({id}) {
+          ctx.destorySelfBullet(id)
+        }
+      })
+    }
+
+    return h("Container", [
+      h(Plane, {
+        x: ctx.planeInfo.x,
+        y: ctx.planeInfo.y,
+        speed: ctx.planeInfo.speed,
+        onAttack: ctx.onAttack,
+      }),
+      ...ctx.bullets.map(createBullets),
+      ...ctx.enemyBullets.map(enemyBullets)
+    ])
+  }
+})
+
+// 创建我方子弹
+function useCreateBulltes() {
+  const bullets = reactive([]);
+
+  const addBullet = (x, y) => {
+    const id = createHashCode();
+    const width = SelfBulletInfo.width;
+    const height = SelfBulletInfo.height;
+    const rotation = SelfBulletInfo.rotation;
+    const dir = SelfBulletInfo.dir;
+    bullets.push({ x, y, width, height, rotation, dir, id });
+  };
+
+  // 销毁子弹
+  const destorySelfBullet = (id) => {
+    const index = bullets.findIndex(info => info.id == id)
+    if (index !== -1) {
+      bullets.splice(index, 1)
+    }
+  }
+
+  return { bullets, addBullet, destorySelfBullet };
+}
+// 创建敌方子弹
+function useCreateEnemyBulltes() {
+   const enemyBullets = reactive([]);
+
+  const addEnemyBullet = (x, y) => {
+    const id = createHashCode();
+    const width = EnemyBulltInfo.width;
+    const height = EnemyBulltInfo.height;
+    const rotation = EnemyBulltInfo.rotation;
+    const dir = EnemyBulltInfo.dir;
+    enemyBullets.push({ x, y, width, height, rotation, dir, id });
+  };
+
+  return { enemyBullets, addEnemyBullet };
+}
+
+// 创建我方飞机的方法前面有，自己看
+```
+
+做完子弹之后呢，我们需要做的就是继续优化了。
+
+首先，我们将一些数据单独提成一个文件，作为公用的 config 文件来做：
+```js
+//./page/index.js
+import StartPage from './StartPage'
+import EndPage from './EndPage'
+import GamePage from './GamePage'
+
+export const PAGE = {
+  start: 'StartGame',
+  game: 'GamePage',
+  end: 'EndPage'
+}
+
+const pageMap = {
+  [PAGE.start]: StartPage,
+  [PAGE.game]: GamePage,
+  [PAGE.end]: EndPage,
+}
+
+export const getPageComponent = (pageName) => {
+  return pageMap[pageName]
+}
+```
+
+此后我们在其他页面就直接引 PAGE 和 getPageComponent 方法就可以了。
+
+再有，将监听按键事件也抽离出来：
+```js
+// ./useKeyBoard.js
+import { onMounted, onUnmounted } from "@vue/runtime-core";
+
+export const useKeyboard = (map) => {
+  const handleKeydown = (e) => {
+    const callbackObj = map[e.code]
+    if (callbackObj && callbackObj.keydown) callbackObj.keydown(e)
+  }
+  const handleKeyup = (e) => {
+    const callbackObj = map[e.code]
+    if (callbackObj && callbackObj.keyup) callbackObj.keyup(e)
+  }
+
+  onMounted(() => {
+    window.addEventListener("keydown", handleKeydown)
+    window.addEventListener("keyup", handleKeyup)
+  })
+
+  onUnmounted(() => {
+    window.removeEventListener("keydown", handleKeydown)
+    window.removeEventListener("keyup", handleKeyup)
+  })
+}
+```
+
+这样的话，我们就不需要在每个页面都去 window.addEventListener 了，只需要在使用的页面调用 useKeyboard 函数，并将对应的方法参数传递进去即可。
+
+我们现在的飞机，只能上下左右移动，不能对角线移动，且不怎么流畅，接下来我们将移动的逻辑也抽离出来作为一个单独的文件来使用：
+```js
+// ./useKeyboardMove.js
+import { game } from "../Game";
+import { ref, onMounted, onUnmounted } from "@vue/runtime-core";
+
+/**
+ * @description 键盘移动
+ * @param x 初始化 x 坐标
+ * @param y 初始化 y 坐标
+ * @param speed 移动速度
+ */
+
+// 定义数据结构——上下为一组。左右为一组
+const commandType = {
+  upAndDown: 'upAndDown',
+  leftAndRight: 'leftAndRight'
+}
+
+// 飞机移动函数
+export const useKeyboardMove = ({ x, y, speed }) => {
+  // 坐标
+  const moveX = ref(x);
+  const moveY = ref(y);
+
+  // 飞行方向数组
+  const moveCommand = []
+
+  // 定义类型
+  const downCommand = {
+    type: commandType.upAndDown,
+    dir: 1,
+    id: 1
+  }
+
+  const upCommand = {
+    type: commandType.upAndDown,
+    dir: -1,
+    id: 2
+  }
+
+  const leftCommand = {
+    type: commandType.leftAndRight,
+    dir: -1,
+    id: 3
+  }
+
+  const rightCommand = {
+    type: commandType.leftAndRight,
+    dir: 1,
+    id: 4
+  }
+
+  const findUpAndDownCommand = () => moveCommand.find((command) => command.type === commandType.upAndDown)
+  
+
+  const findLeftAndRightCommand = () => moveCommand.find((command) => command.type === commandType.leftAndRight)
+  
+
+  const isExistCommand = (command) => {
+    const id = command.id;
+    const result = moveCommand.find((c) => c.id === id)
+    if (result) return true
+    return false
+  }
+
+  const removeCommand = (command) => {
+    const id = command.id;
+    const index = moveCommand.findIndex((c) => c.id === id)
+    moveCommand.splice(index, 1)
+  }
+
+  const handlerTicker = () => {
+    const upAndDownCommand = findUpAndDownCommand()
+    if (upAndDownCommand) {
+      console.log('1111');
+      moveY.value += speed * upAndDownCommand.dir
+    }
+
+    const leftAndRightCommand = findLeftAndRightCommand()
+    if (leftAndRightCommand) {
+      moveX.value += speed * leftAndRightCommand.dir
+    }
+  }
+
+  const commandMap = {
+    ArrowLeft: leftCommand,
+    ArrowRight: rightCommand,
+    ArrowUp: upCommand,
+    ArrowDown: downCommand
+  }
+
+  const handleKeyDown = (e) => {
+    const command = commandMap[e.code]
+    if (command && !isExistCommand(command)) {
+      moveCommand.unshift(command)
+      console.log(command, moveCommand);
+    }
+  }
+
+  const handleKeyUp = (e) => {
+    const command = commandMap[e.code]
+    if (command) {
+      removeCommand(command)
+    }
+  }
+
+  onMounted(() => {
+    game.ticker.add(handlerTicker)
+    window.addEventListener("keydown", handleKeyDown)
+    window.addEventListener("keyup", handleKeyUp)
+  })
+
+  onUnmounted(() => {
+    game.ticker.remove(handlerTicker)
+    window.removeEventListener("keydown", handleKeyDown)
+    window.removeEventListener("keyup", handleKeyUp)
+  })
+
+  return {
+    x: moveX,
+    y: moveY
+  }
+}
+```
+
+同样的，我们把敌机移动和子弹移动都抽离出来：
+```js
+// ./moveBullets.js
+import { stage } from "../config/index";
+
+const bulletSpeed = 7;
+const topLine = -100;
+const bottomLine = stage.height + 50;
+
+const isOverBorder = (val) => {
+  if (val > bottomLine) {
+    return true
+  }
+
+  if (val < topLine) {
+    return true
+  }
+
+  return false
+}
+
+export const moveBullets = (bullets) => {
+  bullets.forEach((bullet, index) => {
+    const dir = bullet.dir;
+    bullet.y += bulletSpeed * dir
+    if (isOverBorder(bullet.y)) {
+      bullets.splice(index, 1)
+    }
+  });
+}
+
+
+// ./moveEnemyPlane.js
+import { stage } from "../config/index";
+
+export const moveEnemyPlane = (enemyPlanes) => {
+  enemyPlanes.forEach((enemyPlane, index) => {
+    if (!enemyPlane.moveInfo) {
+      enemyPlane.moveInfo = {}
+      enemyPlane.moveInfo.dir = 1
+      enemyPlane.moveInfo.count = 0
+    }
+
+    enemyPlane.y++;
+    enemyPlane.x += 1 * enemyPlane.moveInfo.dir
+    enemyPlane.moveInfo.count++
+    if (enemyPlane.moveInfo.count > 120) {
+      const factor = Math.random() > 0.5 ? 1 : -1;
+      // 随机转换方向
+      enemyPlane.moveInfo.dir = enemyPlane.moveInfo.dir * factor
+      enemyPlane.moveInfo.count = 0
+    }
+
+    // 检测是否到边界了
+    if (isArrivedRightBorder(enemyPlane)) {
+      enemyPlane.x = stage.width - enemyPlane.width
+    }
+
+    if (isArrivedLeftBorder(enemyPlane)) {
+      enemyPlane.x = 0
+    }
+  });
+}
+
+function isArrivedRightBorder(enemyPlane) {
+  return enemyPlane.x + enemyPlane.width >= stage.width
+}
+
+function isArrivedLeftBorder(enemyPlane) {
+  return enemyPlane.x <= 0
+}
+```
+
+我们将地图的长宽也提取出来：
+```js
+// ./config/index.js
+export const stage = {
+  width: 750,
+  height: 900
+}
+```
+
+在之后的其他组件中调用时，有了以上几个抽象组件后，就方便了很多。比如敌机组件：
+```js
+// ./EnemyPalne.js
+import { h, defineComponent, toRefs, onMounted, onUnmounted } from '@vue/runtime-core';
+import enemyPlaneImg from '../../assets/enemy.png'
+
+export const enemyPlaneInfo = {
+  width: 308,
+  height: 207,
+  life: 3
+}
+
+// 敌方飞机
+export default defineComponent({
+  props: ['x', 'y'],
+  setup(props, ctx) {
+    // 解构会丢失引用，所以这里需要使用 toRefs
+    // toRefs 和 reactive 的区别：
+    const { x, y } = toRefs(props)
+
+    useAttack(ctx, x, y);
+
+    return {
+      x, y
+    }
+  },
+  render(ctx) {
+    return h("Sprite", {
+      x: ctx.x,  // 容器的 x
+      y: ctx.y,   // 容器的 y
+      texture: enemyPlaneImg
+    })
+  }
+})
+
+// 发射子弹
+const useAttack = (ctx, x, y) => {
+  const attackInterval = 2000;
+  let intervalId;
+
+  onMounted(() => {
+    intervalId = setInterval(() => {
+      ctx.emit("attack", {
+        x: x.value + 105,
+        y: y.value + 200,
+      })
+    }, attackInterval)
+  })
+
+  onUnmounted(() => {
+    clearInterval(intervalId)
+  })
+}
+```
+
+优化完这些组件之后，基本就完成了飞机大战，[完整代码地址](https://gitee.com/hsx33/vue3_-demo/tree/master/play-plane)
