@@ -45,5 +45,40 @@ function testScroll() {
 
 window.addEventListener('scroll', throttle(testScroll, 300))
 ```
+![](../imgs/throttle.png)
 
 函数节流的适用场景会在一些 scroll 和 resize 事件中用到。
+
+## 函数防抖
+
+我们在项目中会经常用到 input 事件，这个时候 input 上的回调会在我们按键时频繁触发，这也是非常不友好的，为了解决这个问题，有引申出了函数防抖。
+
+### 基本概念
+
+函数防抖的基本思路就是将多个信号合并为一个信号；触发高频事件后 n 秒内函数只会执行一次。如果 n 秒内高频事件再次触发，则重新计算时间。也可以说是任何频繁触发的情况下，只有任务触发的间隔超过指定间隔的时候，任务才会执行。
+
+::: tip 实现思路
+我们先创建一个 debounce 函数，这个方法是某个事件（比如oninput）的回调，在这个函数体内，我们先定义一个 timeout 变量，用来表示后面要用到的计时器 setTimeout；然后再返回一个闭包，闭包内先清除掉 timeout 定义的计时器，然后重新定义一个计时器，并在 setTimeout 的回调中调用传进来的函数方法，使用 apply 改变 this 的指向。
+
+此时当我们触发高频事件时，相对应的会执行事件里的回调，也就是防抖函数。在函数里，当次事件里的闭包会把上次事件里的定时器给清除掉，这样就不会去调用定时器里的目标函数（这是建立在事件还在继续触发的基础上）。而当用户不再触发这个事件的时候，clearTimeout 将上一次的定时器清除掉以后，紧接着执行 setTimeout，待设定好的时间间隔过去之后就可以触发函数了。
+:::
+
+### 实例代码
+```js
+function debounce (fn, time) {
+    let timeout;
+    return function() {
+        clearTimeout(timeout);
+        timeout = setTimeout(function() {
+            fn.apply(this, arguments);
+        }, time)
+    }
+}
+
+function testDebounce() {
+    console.log('函数防抖')
+}
+
+var inputDom = document.getElementById('inputId')
+inputDom.addEventListener('input', debounce(testDebounce, 300))
+```
