@@ -131,7 +131,110 @@ They are the same!
 :::
 
 ## 6、输出下面代码结果
+
+```js
+function greeting () {
+    throw 'Hello world!';
+}
+
+function sayHi() {
+    try {
+        const data = greeting()
+        console.log('It worked!', data)
+    } catch(e) {
+        console.log('Oh no an error:', e)
+    }
+}
+```
+
+::: tip 参考答案
+
+Oh no an error: Hello world!
+
+
+
+通过 throw 语句，我们可以创建自定义错误。而通过它，我们可以抛出异常。异常可以是一个字符串，一个数字，一个布尔类型或者是一个对象。在本例中，我们的异常是一个字符串，它会被 catch 捕获到，并打印出来。
+
+:::
+
 ## 7、输出下面代码结果
+
+```js
+fetch('https://www.website.com/api/user/1')
+  .then(res => res.json())
+  .then(res => console.log(res))
+```
+
+::: tip 参考答案
+
+前一个 .then() 中回调方法返回的结果
+
+
+
+第二个 .then 中 res 的值等于前一个 .then 中的回调函数返回的值。你可以像这样继续链式调用 .then，将值传递给下一个处理程序。
+
+:::
+
 ## 8、输出下面代码结果
+
+```js
+function sum(a, b) {
+    return a + b;
+}
+
+sum(1, '2')
+```
+
+::: tip 参考答案
+
+12
+
+
+
+JavaScript 是一种动态类型的语言：我们没有指定某些变量的类型。在你不知道的情况下，值可以自动转换为另一种类型，称为隐式类型转换。强制从一种类型转换为另一种类型。
+
+在本例中，1在与字符串2相加时，被强制转换成了字符串1，所以最后的结果为字符串12。
+
+:::
+
 ## 9、输出下面代码结果
+
+```js
+const shape = {
+    radius: 10,
+    diameter() {
+        return this.radius * 2;
+    },
+    perimeter: () => 2 * Math.PI * this.radius
+}
+
+shape.diameter();
+shape.perimeter();
+```
+
+::: tip 参考答案
+
+20 NaN
+
+
+
+这里就考察的是箭头函数和普通函数里面 this 的指向问题，diameter 是普通函数，this 指向对象 shape，所以调用 diameter 函数时得到 20；而 perimeter 是箭头函数，此时的 this 指向是它在定义时的所在上下文中，也就是全局对象 window 中，没有 radius 属性，返回 undefined，计算得出的值为 NaN。
+
+:::
+
 ## 10、输出下面代码结果
+
+```js
+const { name: myName } = { name: 'Lydia' }
+console.log(name);
+```
+
+::: tip 参考答案
+
+ReferenceError
+
+
+
+我们这里实际上是将右侧对象中 name 的值解构出来，将其值 Lydia 分配给名为 myName 的变量。而后面我们又打印的是 name，这个是属性名，而不是变量，当打印一个未定义的变量时，就会引发 ReferenceError 错误。
+
+:::
