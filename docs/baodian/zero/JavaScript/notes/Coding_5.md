@@ -200,4 +200,34 @@ second, I have resolved! and I have resolved!, second
 
 ## 9、输出下面代码结果
 
+```js
+const obj = { 1: 'a', 2: 'b', 3: 'c' };
+const set = new Set([1,2,3,4,5]);
+
+obj.hasOwnProperty('1');
+obj.hasOwnProperty(1);
+set.has('1');
+set.has(1);
+```
+
+::: tip 参考答案 
+true true false true
+
+所有对象键（不包括 Symbols）都会被存储为字符串，即使你没有给定字符串类型的键。这就是为什么 obj.hasOwnProperty('1') 也返回 true。但是需要注意的是，Set 对象并不适合，在 Set 中不会自动将键存储为字符串，所以 has('1') 返回 false。
+:::
+
 ## 10、输出下面代码结果
+
+```js
+const name = 'Lydia';
+age = 21;
+
+console.log(delete name);
+console.log(delete age);
+```
+
+::: tip 参考答案
+false true
+
+delete 操作符返回一个布尔值；true 表示删除成功，false 表示删除失败。需要注意的是**通过 var, let, const关键字声明的变量是无法使用 delete 操作符来删除的**。age 对象其实是挂载在全局对象 window 上的，所以这里使用 delete 是可以删除成功的。
+:::
