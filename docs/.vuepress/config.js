@@ -72,8 +72,8 @@ module.exports = {
         link: 'https://vuepress-theme-reco.recoluan.com'
       }
     ],
-    plugins: ['mermaidjs'],
     activeHeaderLinks: false,
     displayAllHeaders: true
-  }
+  },
+  plugins: ['flowchart']
 }
