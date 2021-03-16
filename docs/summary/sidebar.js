@@ -22,6 +22,7 @@ module.exports = [
       '/summary/notes/git_file',
       '/summary/notes/page_analysis',
       '/summary/notes/windows_cmd',
+      '/summary/notes/front_better',
     ]
   }
 ]
