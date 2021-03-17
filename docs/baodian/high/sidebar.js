@@ -6,6 +6,7 @@ module.exports = [
       '/baodian/high/notes/loaderVSplugin',
       '/baodian/high/notes/throttle_debounce',
       '/baodian/high/notes/vue_life',
+      '/baodian/high/notes/face_1',
     ]
   }
 ]
