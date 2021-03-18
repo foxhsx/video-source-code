@@ -117,32 +117,66 @@ sum.default(4)
 ## 6、输出下面代码结果
 
 ```js
+async function getData() {
+  return await Promise.resolve('I made it!')
+}
 
+const data = getData();
+console.log(data);
 ```
 
 ::: tip 参考答案
+Promise {\<pengding\>}
 
+异步函数始终返回一个 promise。await 仍然需要等待 promise 的解决：当我们调用 getData() 并将其赋值给 data，此时 data 为 getData 方法返回的一个挂起的 promise，该 promise 并没有解决，还处于 pengding 状态。
+
+如果我们想要访问已解决的值 'I made it!'，可以在 data 上使用 .then() 方法：
+
+```js
+data.then(res => console.log(res))
+```
 :::
 
 ## 7、输出下面代码结果
 
 ```js
+const numbers = [1, 2, 3, 4, 5];
+const [y] = numbers;
 
+console.log(y);
 ```
 
-
 ::: tip 参考答案
+1
 
+我们可以通过解构赋值来解析来自对象的数组或属性的值。在数组的解构中，我们通常将左边的值和右边的值按照下标做一一对应。
 :::
 
 ## 8、输出下面代码结果
 
-```md
-
+```js
+[1,2,3,4].reduce((x, y) => console.log(x, y))
 ```
 
 ::: tip 参考答案
+1 2 and undefined 3 and undefined 4
 
+reducer 函数接收四个参数：
+1. Accumulator (acc) (累计器)
+2. Current Value (cur) (当前值)
+3. Current Index (idx) (当前索引)
+4. Source Array (src) (源数组)
+
+语法：
+```js
+arr.reduce(callback(accumulator, currentValue[, index[, array]])[, initialValue])
+```
+
+其中这个 accumulator 值呢是累计器累计回调的返回值；它是上一次调用回调时返回的累积值，或者 initialValue。
+
+PS: initialValue 是作为第一次调用 callback 函数时的第一个参数的值。如果没有提供初始值，则将使用数组中的第一个元素。在没有初始化值的空数组上调用 reduce 将报错。
+
+上面例子里，并没有返回值，只是打印了累计器和当前值。
 :::
 
 ## 9、输出下面代码结果
