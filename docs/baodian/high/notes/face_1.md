@@ -36,6 +36,20 @@ categories:
 
 ## 如何处理单页应用首次加载较慢问题
 
+::: tip 参考
+**分析问题**
+
+首先单页应用首次加载慢的原因是什么？
+
+单页应用只有一个空的 html，剩下的都是使用 js 去控制，所以在首屏加载时，会把 js 加载完之后，再等 js 执行完毕，才会显示出相应的内容出来。这就导致了单页应用首屏加载慢的问题。那么对于小型项目来说，可能不明显，因为打包出来的 vendor.js 也不会很大，但是对于一些中大型项目来说，会引许多第三方库，都就会导致打包之后的包体积会很大，首页加载 js 会花费很多时间，而执行 js 也是需要时间。
+
+这里对于首屏应用加载慢的优化可以做以下几点：
+1. 做分包处理，不要将所有的 js 文件都打包到一起去，使用 webpack 的分包功能，将 js 分成不同的部分，按需加载；
+2. 路由懒加载（本质上也是分包处理）；
+3. 使用 CDN 加速；
+4. 做SSR服务端渲染；
+:::
+
 ## ajax 和 fetch、asios 的区别
 
 ::: tip 参考
@@ -82,18 +96,85 @@ request.setRequestHeader('Content-Type', 'application/json')  // 设置请求头
 request.send()  // 到这一步，请求才正式发出
 ```
 
-实际项目中我们还是会采用一些封装好的库来使用，原生方法比较繁琐，比如经典的 jQuery 就有封装好的 ajax 方法。
-:::
+实际项目中我们还是会采用一些封装好的库来使用，原生方法比较繁琐，比如经典的 jQuery 就有封装好的 ajax 方法，而且很好的解决了浏览器兼容的问题。
 
-## 路由守卫
+**axios**
+
+其实 axios 并不是一种新的技术。它是基于 Promise 用于浏览器和 nodejs 的 HTTP 客户端，本质上也是对原生 XHR 的封装，只不过它是 Promise 的实现版本，符合最新的 ES 规范，有以下特点：
+- 从浏览器中创建 XMLHttpRequests
+- 从 nodejs 创建 http 请求
+- 支持 Promise API
+- 拦截请求和响应
+- 转换请求数据和响应数据
+- 取消请求
+- 自动转换 JSON 数据
+- 客户端支持防御 XSRF
+
+在浏览器支持性上：
+
+![](../imgs/broswer.png)
+
+axios 在兼容性上只对现代浏览器友好，对于版本较低的浏览器不支持。
+
+因为 axios 设计简洁，API 简单，支持浏览器和 node，所以现在已经被广泛使用。
+
+**fetch**
+
+fetch 是前端发展的一种新技术产物。
+
+Fetch API 提供了一个 JavaScript 接口，用于访问和操纵 HTTP 管道的部分，例如请求和响应。它还提供了一个全局 fetch() 方法，该方法提供了一种简单、合理的方式来实现跨网络异步获取资源。
+
+这种功能以前是使用 XMLHttpRequests 实现的。Fetch 提供了一个更好的替代方法，可以很容易地被其他技术使用。例如 Serive Workers。Fetch 还提供了单个逻辑位置来定义其他 HTTP 相关概念，例如 CORS 和 HTTP 的扩展。
+
+在使用 fetch 的时候需要注意：
+- 当接收到一个代表错误的 HTTP 状态码时，从 fetch() 返回的 Promise 不会被标记为 reject，即使该 HTTP 响应的状态码是 404 或 500.相反，它会将 Promise 状态标记为 resolve （但是会将 resolve 的返回值的 ok 属性设置为 false）。仅当网络故障或者请求被阻时，才会标记为 reject。
+- 默认情况下，fetch 不会从服务端发送或接收任何 cookies，如果站点依赖于用户 session，则会导致未经认证的请求（要发送 cookies，必须设置 credentials 选项）。
+
+来看个例子：
+
+```js
+fetch('http://example.com/movies.json')
+  .then(function(response) {
+    return response.json();
+  })
+  .then(function(myJson) {
+    console.log(myJson);
+  });
+```
+
+fetch代表着更先进的技术方向，但是目前兼容性不是很好，在项目中使用的时候得慎重。
+:::
 
 ## v-for 与v-if 哪个先加载
 
-## watch
+::: tip 参考
+v-for
+:::
 
-## vue的get 与set  方法 区别及使用
+## vue的 get 与 set 方法区别及使用
+
+::: tip 参考
+
+:::
 
 ## 深拷贝浅拷贝
+
+::: tip 参考
+我们平常说的深拷贝和浅拷贝都是基于对对象的拷贝，而这个拷贝又分为浅拷贝和深拷贝。
+
+**浅拷贝**
+
+浅拷贝其实可以理解为赋值，将对象地址的引用赋值。这个时候修改对象中的属性或者值，会导致所有引用这个对象的值改变。
+1. 赋值——最基础的赋值方式，只是将对象的引用赋值。
+2. Object.assign()
+```md
+Object.assign() 是 ES6 里的新函数。
+```
+
+**深拷贝**
+
+在内存空间中重新生成一个对象，
+:::
 
 ## Object.keys()
 

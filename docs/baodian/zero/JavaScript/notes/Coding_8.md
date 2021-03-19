@@ -181,8 +181,17 @@ PS: initialValue 是作为第一次调用 callback 函数时的第一个参数�
 
 ## 9、输出下面代码结果
 
-::: tip 参考答案
+```js
+const name = 'Lydia Hallie';
 
+console.log(!typeof name === 'object');
+console.log(!typeof name === 'string');
+```
+
+::: tip 参考答案
+false false
+
+首先 typeof 返回的是一个字符串，但是对字符串取反之后就成了布尔值，所以 === 不成立。
 :::
 
 ## 10、输出下面代码结果
