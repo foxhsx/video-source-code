@@ -7,6 +7,7 @@ module.exports = [
       '/baodian/high/notes/js/face_1',
       '/baodian/high/notes/js/shallowClone',
       '/baodian/high/notes/js/deepClone',
+      '/baodian/high/notes/js/ajax_axios',
     ]
   }
 ]
