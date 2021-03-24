@@ -5,6 +5,7 @@ module.exports = [
     children: [
       '/baodian/high/notes/vue/vue_life',
       '/baodian/high/notes/vue/vifandvfor',
+      '/baodian/high/notes/vue/get_set',
     ]
   }
 ]
