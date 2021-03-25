@@ -49,12 +49,6 @@ categories:
 4. 做SSR服务端渲染；
 :::
 
-## vue的 get 与 set 方法区别及使用
-
-::: tip 参考
-
-:::
-
 ## Object.keys()
 
 ## Object.assign()
