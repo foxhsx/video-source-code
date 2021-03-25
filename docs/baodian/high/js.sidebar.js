@@ -8,6 +8,7 @@ module.exports = [
       '/baodian/high/notes/js/shallowClone',
       '/baodian/high/notes/js/deepClone',
       '/baodian/high/notes/js/ajax_axios',
+      '/baodian/high/notes/js/foreach_map',
     ]
   }
 ]

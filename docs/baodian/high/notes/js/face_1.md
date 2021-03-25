@@ -57,5 +57,5 @@ categories:
 
 ## 对 Typescript 有多少了解
 
-## foreach和map的区别
+## 虚拟DOM和真实DOM的区别
 
