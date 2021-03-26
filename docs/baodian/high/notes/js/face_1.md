@@ -59,3 +59,13 @@ categories:
 
 ## 虚拟DOM和真实DOM的区别
 
+## typeof null 等于什么？为什么？用什么方法可以拿到比较准确的类型判断？
+
+## instanceof 与 typeof 的区别？
+
+## Set 是什么？怎么用for循环遍历
+
+## catch-control HTTP 缓存
+
+## 回流和重绘
+
