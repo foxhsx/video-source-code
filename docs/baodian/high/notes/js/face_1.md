@@ -49,8 +49,6 @@ categories:
 4. 做SSR服务端渲染；
 :::
 
-## Object.keys()
-
 ## Object.assign()
 
 ## 原生的绑定事件的方法有几种
@@ -68,4 +66,5 @@ categories:
 ## catch-control HTTP 缓存
 
 ## 回流和重绘
+
 
