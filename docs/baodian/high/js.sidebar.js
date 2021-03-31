@@ -11,6 +11,7 @@ module.exports = [
       '/baodian/high/notes/js/foreach_map',
       '/baodian/high/notes/js/vd_td',
       '/baodian/high/notes/js/object_keys',
+      '/baodian/high/notes/js/closure',
     ]
   }
 ]

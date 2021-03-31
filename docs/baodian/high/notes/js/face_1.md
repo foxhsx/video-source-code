@@ -54,9 +54,6 @@ categories:
 ## 原生的绑定事件的方法有几种
 
 ## 对 Typescript 有多少了解
-
-## 虚拟DOM和真实DOM的区别
-
 ## typeof null 等于什么？为什么？用什么方法可以拿到比较准确的类型判断？
 
 ## instanceof 与 typeof 的区别？
@@ -69,6 +66,14 @@ categories:
 
 ## 普通函数和使用 const 定义函数哪个更好？
 
+## 原型和原型链是什么
 
+## new Proxy
 
+## git rebase 和 merge 的区别
 
+## 如何判断两个变量相等
+
+## indexOf 和 findIndex 的区别
+
+## typeof 可以判断哪些类型？instanceof 做了什么？null为什么被typeof错误的判断为了'object'？
