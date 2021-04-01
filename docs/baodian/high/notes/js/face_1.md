@@ -62,8 +62,6 @@ categories:
 
 ## catch-control HTTP 缓存
 
-## 回流和重绘
-
 ## 普通函数和使用 const 定义函数哪个更好？
 
 ## 原型和原型链是什么
