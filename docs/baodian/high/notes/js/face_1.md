@@ -75,3 +75,12 @@ categories:
 ## indexOf 和 findIndex 的区别
 
 ## typeof 可以判断哪些类型？instanceof 做了什么？null为什么被typeof错误的判断为了'object'？
+
+## 闭包 JS基础 编程题 (字节) 
+
+```js
+var foo = function(...args) {} // 要求实现函数体
+var f1 = foo(1,2,3); f1.getValue(); // 6 输出是参数的和
+var f2 = foo(1)(2,3); f2.getValue(); // 6
+var f3 = foo(1)(2)(3)(4); f3.getValue(); // 10
+```
