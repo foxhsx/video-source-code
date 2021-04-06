@@ -14,6 +14,7 @@ module.exports = [
       '/baodian/high/notes/js/closure',
       '/baodian/high/notes/js/repaint',
       '/baodian/high/notes/js/object_assign',
+      '/baodian/high/notes/js/js_event_bind',
     ]
   }
 ]

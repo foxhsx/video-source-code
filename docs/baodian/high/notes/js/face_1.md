@@ -49,10 +49,6 @@ categories:
 4. 做SSR服务端渲染；
 :::
 
-## Object.assign()
-
-## 原生的绑定事件的方法有几种
-
 ## 对 Typescript 有多少了解
 ## typeof null 等于什么？为什么？用什么方法可以拿到比较准确的类型判断？
 
