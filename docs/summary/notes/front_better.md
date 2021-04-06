@@ -170,5 +170,24 @@ contentHash 和 版本号。
 2. 静态资源压缩——compression：webpack 里内置了 gzip 压缩，配合 NGINX 使用。
 3. Tree Shaking
 
-
 FP? FCP? FMP?
+
+相对而言，前端首屏打开的速度是非常重要的。我们在 vue 中会使用 SSR 服务端渲染来提高首屏的渲染速度。
+
+## 统计
+
+|           | fetch                                           |
+| --------- | ----------------------------------------------- |
+| 重定向    | redirect                                        |
+| DNS       | domainLookup                                    |
+| TCP       | connection                                      |
+| 发送请求  | Request                                         |
+| 响应      | Response                                        |
+| Dom parse | Domloading DomInteractive<br />domContentLoaded |
+| render    | domComplete                                     |
+
+为了解决 SPA 的首屏和 SEO 问题，必须要用的方式：
+
+1. prerenderer
+2. 静态化-京东做了大量的静态化，也就是很多的 html。
+3. 同构（ssr + spa）综合体
