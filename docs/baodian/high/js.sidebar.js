@@ -13,6 +13,7 @@ module.exports = [
       '/baodian/high/notes/js/object_keys',
       '/baodian/high/notes/js/closure',
       '/baodian/high/notes/js/repaint',
+      '/baodian/high/notes/js/object_assign',
     ]
   }
 ]

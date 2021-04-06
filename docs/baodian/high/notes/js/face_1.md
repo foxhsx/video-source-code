@@ -84,3 +84,5 @@ var f1 = foo(1,2,3); f1.getValue(); // 6 输出是参数的和
 var f2 = foo(1)(2,3); f2.getValue(); // 6
 var f3 = foo(1)(2)(3)(4); f3.getValue(); // 10
 ```
+
+## 了解词法环境吗？它和闭包有什么联系？
