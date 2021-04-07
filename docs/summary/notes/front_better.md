@@ -188,6 +188,80 @@ FP? FCP? FMP?
 
 为了解决 SPA 的首屏和 SEO 问题，必须要用的方式：
 
-1. prerenderer
+1. prerenderer--预加载
 2. 静态化-京东做了大量的静态化，也就是很多的 html。
 3. 同构（ssr + spa）综合体
+
+我们在主流浏览器的控制台去访问 Performance API，调用 `getEntriesByType('navigation')[0]`，之后打印出来，可以看到各个时间点的细节（当前页面性能的一个数据）：
+
+![](../imgs/performance.png)
+
+我们根据 W3C 标准给的图来查看对应的节点：
+
+![](../imgs/timestamp-diagram.svg)
+
+这样将两个图结合起来看就可以得到对应点的信息。
+
+我们在页面中可以算出来的指标，都是硬性的。而和交互相关的，则需要别的方式来统计——FMP。
+
+## FMP 计算
+
+FMP(first meaningful paint)，可以理解为第一个有意义的页面。拿淘宝为例，当淘宝首页进去之后，看到的页面就可以理解为 FMP。
+
+![](../imgs/taobao.png)
+
+不同的业务模式都有自己 FMP 的定义，FMP 没有一个统一的概念，**视业务而定**。也可以这样理解，只要是有意义的渲染，我们都可以视为 FMP。拿百度来说，只要渲染出搜索框和logo就可以认为是 FMP。
+
+那么如何设计 FMP 的算法？
+
+前置知识：对浏览器的工作机制有所了解。
+
+> 在 Chrome 的 performance 中，有对 FMP 的判定
+>
+> ![](../imgs/Chrome_fmp.png)
+
+1. 页面进入的时候，使用 mutationObserver API 对 DOM 进行监听
+2. 对变化的 DOM 打上标记
+3. 文档的 load 触发
+4. 遍历 DOM Tree
+5. 根据元素的可视区域，计算元素的权重
+6. 遍历父元素，对比合并
+7. 找到权重最高的
+8. 判断此元素是否加载完毕
+   1. 还需要判断是不是 img、video、audio这种资源标签，如果是，还需要判断资源的加载时间 performance.getEntries
+   2. 只是单纯的 DOM，只要用时间 - dom 变化即可。
+9. 最后算出 FMP。
+
+## 我们能做哪些优化？
+
+### 前端框架性能
+
+- FMP 统计接收
+- Vue 里的性能优化
+- React 里的性能优化
+- 其他框架
+
+只要能快一点，都算优化
+
+1. 代码优化
+   1. 框架本身的优化
+   2. js 和 css 的写法
+2. 研发优化 项目的深度优化
+   1. 需求（项目不知道怎么描述）
+   2. 大文件上传
+   3. 长列表优化
+3. 开发环境的优化(vite, snowpack)
+4. 人的优化
+
+## FMP 统计
+
+先在 git 上 down 下来一个 [demo](https://github.com/bailicangdu/vue2-elm)。
+
+### FMP
+
+- 真正页面被用户看到的指标
+- 相对于FP，FCP，更贴近实际
+- 没有统一标准，计算方式
+  - 自己的产品给个元素打点
+  - MutationObserver
+  - 趋势计算 dom 变化趋势
