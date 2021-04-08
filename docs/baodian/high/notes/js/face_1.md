@@ -65,8 +65,6 @@ categories:
 
 ## 如何判断两个变量相等
 
-## indexOf 和 findIndex 的区别
-
 ## typeof 可以判断哪些类型？instanceof 做了什么？null为什么被typeof错误的判断为了'object'？
 
 ## 闭包 JS基础 编程题 (字节) 
