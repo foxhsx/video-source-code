@@ -50,9 +50,6 @@ categories:
 :::
 
 ## 对 Typescript 有多少了解
-## typeof null 等于什么？为什么？用什么方法可以拿到比较准确的类型判断？
-
-## instanceof 与 typeof 的区别？
 
 ## Set 是什么？怎么用for循环遍历
 

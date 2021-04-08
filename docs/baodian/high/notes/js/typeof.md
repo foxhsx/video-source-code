@@ -13,6 +13,7 @@ categories:
 2. 为什么？
 3. 用什么方法可以拿到比较准确的类型判断？
 4. 自己实现一个 typeof 方法怎么实现？
+5. instanceof 与 typeof 的区别？
 
 今天我们来带着问题一个个解决。
 
@@ -80,3 +81,9 @@ function typeOf(value) {
   return Object.prototype.toString.call(value).slice(8, -1).toLocaleLowerCase()
 }
 ```
+
+## instanceof 与 typeof 的区别是什么？
+
+其实实际上来说 instanceof 更倾向于判断引用数据类型，就跟它的定义一样：用来检测构造函数的 `prototype` 属性是否出现在某个实例对象的原型链上。也可以理解为当前对象是不是某个类的实例。
+
+而 typeof 则是直接返回一个字符串，表示当前值的数据类型，对于引用数据来说，不会判断是否是某个类或者数组，它只会返回 object。
