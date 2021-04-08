@@ -85,3 +85,7 @@ var f3 = foo(1)(2)(3)(4); f3.getValue(); // 10
 ## web 安全
 
 ## 性能工具
+
+## 二分查找
+
+## 手写 reduce 和 filter
