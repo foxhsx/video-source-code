@@ -16,7 +16,9 @@ module.exports = [
       '/baodian/high/notes/js/object_assign',
       '/baodian/high/notes/js/js_event_bind',
       '/baodian/high/notes/js/typeof',
-      '/baodian/high/notes/js/indexOf',
+      '/baodian/high/notes/js/indexof',
+      '/baodian/high/notes/js/set',
+      '/baodian/high/notes/js/typescript',
     ]
   }
 ]

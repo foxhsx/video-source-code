@@ -265,3 +265,16 @@ FMP(first meaningful paint)，可以理解为第一个有意义的页面。拿�
   - 自己的产品给个元素打点
   - MutationObserver
   - 趋势计算 dom 变化趋势
+
+### FMP 计算演示
+
+- 计算
+  - 元素权重：宽\*高\*权重（img, video要比普通DOM高）
+  - 进入页面开始记录，启用 mutationobserver
+  - 遍历 dom tree，根据可视区域面积，计算得分
+  - 遍历父元素修正得分（父元素与子元素之和的最大值）
+  - 平均值，过滤出目标元素
+  - 是否是 img、video 和 canvas 等
+  - 合计求出 FMP
+
+大佬建议：如何遇到瓶颈，可以去面试求虐！！！

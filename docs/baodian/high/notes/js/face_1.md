@@ -49,10 +49,6 @@ categories:
 4. 做SSR服务端渲染；
 :::
 
-## 对 Typescript 有多少了解
-
-## Set 是什么？怎么用for循环遍历
-
 ## catch-control HTTP 缓存
 
 ## 普通函数和使用 const 定义函数哪个更好？
@@ -64,8 +60,6 @@ categories:
 ## git rebase 和 merge 的区别
 
 ## 如何判断两个变量相等
-
-## typeof 可以判断哪些类型？instanceof 做了什么？null为什么被typeof错误的判断为了'object'？
 
 ## 闭包 JS基础 编程题 (字节) 
 
@@ -89,3 +83,10 @@ var f3 = foo(1)(2)(3)(4); f3.getValue(); // 10
 ## 二分查找
 
 ## 手写 reduce 和 filter
+
+## 虚拟列表
+
+## 异步并发
+
+## 大文件上传
+
