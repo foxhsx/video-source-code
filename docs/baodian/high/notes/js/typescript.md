@@ -1,6 +1,6 @@
 ---
 title: 对 Typescript 有多少了解
-date: 2021-04-11
+date: 2021-04-12
 tags:
  - JavaScript
  - 面试
