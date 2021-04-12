@@ -24,6 +24,7 @@ module.exports = [
       '/frontend/Engineering/notes/performanceOptimization',
       '/frontend/Engineering/notes/lazyLoading',
       '/frontend/Engineering/notes/PWA',
+      '/frontend/Engineering/notes/selfcli',
     ]
   }
 ]
