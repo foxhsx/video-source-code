@@ -100,14 +100,93 @@ rm(path.join(config.build.assetsRoot, config.build.assetsSubDirectory), err => {
 
 :::
 
+## 脚手架工具常用的包有哪些
+
 那除了上述我们说到的包之外，还有一些其他也常用的包：
 
-- commander - 定义命令，解析命令
-- inquirer - 做出交互，如提问
-- Chalk - 命令行输出有色字体
-- Ora - loading 效果，图标
+- commander - 定义命令，解析命令[文档](https://github.com/tj/commander.js/blob/HEAD/Readme_zh-CN.md#%e5%ae%89%e8%a3%85)
 
-## 脚手架工具常用的包有哪些
+  ::: tip
+
+  安装：`npm install commander`
+
+  页面中使用：
+
+  ```js
+  const commander  = require("commander");
+  // 定义版本号
+  commander.version('1.0.0', '-v --version');
+  // 定义指令
+  commander.command('init <name>').action(() => {
+    // 命令回调，输入命令后，需要做的事情
+  
+  });
+  // 自定义执行
+  commander.option('-h', 'cecil`s cli');
+  ```
+
+  :::
+
+- inquirer - 做出交互，如提问
+
+- Chalk - 命令行输出有色字体[文档](https://github.com/chalk/chalk#readme)
+
+  ::: tip
+
+  安装：`npm i chalk`
+
+  这个库并不能直接在控制要输出，只是还是结合 `console.log` 来改变文字的颜色或者背景。
+
+  文件中使用：
+
+  ```js
+  // 输出字体库
+  const chalk = require("chalk");
+  // 改变字体的颜色
+  console.log(chalk.red.bgBlue('来看看chalk'));
+  // 当然我们也可以使用自定义的方法，使用 rgb 和 bgRgb 来设置颜色
+  console.log(chalk.rgb(212,99,23).bgRgb(33,44,66)('自定义的颜色'));
+  // 我们也可以将其和 ora 来结合起来使用
+  const spinner = ora(chalk.rgb(212,99,23).bgRgb(33,44,66)('转起来！')).start();
+  ```
+
+  :::
+
+- Ora - loading 效果，图标[文档](https://github.com/sindresorhus/ora#readme)
+
+  ::: tip
+
+  安装：`npm install ora`
+
+  文件中使用：
+
+  ```js
+  // loading 库
+  const ora  = require("ora");
+  // 开始在控制台 loading
+  const spinner = ora('加油！').start();
+  // 改变转动圆圈的颜色
+  spinner.color = 'yellow';
+  // 我们可以设置其在两秒之后终止
+  setTimeout(() => {
+    spinner.stop();
+  }, 2000);
+  ```
+
+  :::
 
 ## 如何自己实现一个 vue-cli
 
+### Vue-cli 属于什么工具？
+
+它是一个项目脚手架，它的作用：
+
+- 下载项目初始化模板
+- 定义项目规则
+- 定义项目操作命令
+
+### 一个脚手架的工作流程
+
+输入初始化命令 --》 执行交互的 js --》与用户交互 --》根据用户指令下载模板 --> 模板下载成功
+
+- 输入初始化命令之后，当在命令行输入命令的时候，就会去执行一段 JS，这就跟在项目文件里用 node 执行 js 文件是一样的。在执行的过程中，会运用到一些前面说的依赖包，用这些包提供的 API 来跟用户进行交互。然后根据用户指令去下载对应的模板到本地。
