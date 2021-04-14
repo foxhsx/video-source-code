@@ -108,3 +108,16 @@ var f3 = foo(1)(2)(3)(4); f3.getValue(); // 10
 
 ## 什么变量是存储在堆/栈？
 
+## JS 异步笔试题，请写出下面代码的运行结果（哔哩哔哩）?
+
+```js
+var date = new Date() 
+console.log(1, new Date() - date) 
+setTimeout(() => {
+  console.log(2, new Date() - date)
+}, 500) 
+Promise.resolve().then(console.log(3, new Date() - date)) 
+while(new Date() - date < 1000) {} 
+console.log(4, new Date() - date)
+```
+

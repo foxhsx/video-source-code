@@ -24,6 +24,8 @@ module.exports = [
       '/summary/notes/windows_cmd',
       '/summary/notes/front_better',
       '/summary/notes/addmodule',
+      '/summary/notes/axios_form',
+      '/summary/notes/cryptojs_sign',
     ]
   }
 ]
