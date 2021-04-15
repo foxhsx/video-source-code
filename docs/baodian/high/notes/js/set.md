@@ -152,3 +152,5 @@ for (let item of mySet) {
 ```js
 let setArr = Array.from(mySet);  // [1, 5, "some text", {"a": 1, "b": 2},]
 ```
+
+我们在去重时就可以使用到 Arry.from() 和 Set 来快速完成去重的操作。
