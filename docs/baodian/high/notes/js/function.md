@@ -158,14 +158,17 @@ new HandleFn(); // this => HandleFn 的实例
 const obj = {
   callThis () {
     console.log(this);
-    const callback = (() => {
+    const callback = () => {
       console.log(this)
-    })
+    }
+    callback()
   }
 }
 
 obj.callThis() // this => obj  // this => obj
 ```
+
+这个里面 callback 是函数体内的一个函数，而它使用了箭头函数来定义，所以当调用 callback 的时候，打印出来的 this，还是当前函数体外的 this。
 
 ## 各自适应的场景
 
