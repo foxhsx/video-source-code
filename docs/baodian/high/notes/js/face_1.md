@@ -51,8 +51,6 @@ categories:
 
 ## catch-control HTTP 缓存
 
-## 普通函数和使用 const 定义函数哪个更好？
-
 ## 原型和原型链是什么
 
 ## new Proxy
@@ -121,3 +119,4 @@ while(new Date() - date < 1000) {}
 console.log(4, new Date() - date)
 ```
 
+## 讲下 V8 sort 的大概思路，并手写一个 sort 的实现

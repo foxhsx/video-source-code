@@ -20,6 +20,7 @@ module.exports = [
       '/baodian/high/notes/js/indexof',
       '/baodian/high/notes/js/set',
       '/baodian/high/notes/js/typescript',
+      '/baodian/high/notes/js/function',
     ]
   }
 ]
