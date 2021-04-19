@@ -121,6 +121,9 @@ console.log(4, new Date() - date)
 
 ## 讲下 V8 sort 的大概思路，并手写一个 sort 的实现
 
+在 V8 7.0 版本之前 ，数组长度小于10时， Array.prototype.sort() 使用的是插入排序，否则用快速排序。
+在 V8 引擎 7.0 版本之后，采用了一种混合排序的算法：TimSort
+
 ## CSS 盒模型有哪些？
 
 ## 清除 float
@@ -142,3 +145,5 @@ console.log(4, new Date() - date)
 ## css3 实现 1px 方法
 
 ## webpack 打包原理
+
+## 如何判断url中只包含qq.com

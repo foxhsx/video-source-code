@@ -1,5 +1,5 @@
 ---
-title: 普通函数和使用表达式定义函数哪个更好？
+title: 函数定义的方法都有哪些？
 date: 2021-04-16
 tags:
  - JavaScript
@@ -170,5 +170,43 @@ obj.callThis() // this => obj  // this => obj
 
 这个里面 callback 是函数体内的一个函数，而它使用了箭头函数来定义，所以当调用 callback 的时候，打印出来的 this，还是当前函数体外的 this。
 
+箭头函数有两个方面的作用：更简短的函数并且不绑定 `this`。这就使箭头函数的使用更倾向于纯函数。
+
+而因为没有 `this` 这个特性，也导致了 `call、apply、bind` 调用时，只能传递参数（不能绑定 this），第一个参数会被忽略。
+
+```js
+var adder = {
+  base: 1,
+
+  add: function (a) {
+    var f = v => v + this.base;
+    return f(a);
+  },
+
+  addThruCall: function (a) {
+    var f = v => v + this.base;
+    var b = {
+      base: 2
+    }
+
+    return f.call(b, a);
+  }
+}
+
+console.log(adder.add(1));  // 2
+console.log(adder.addThruCall(1));  // 2
+```
+
+总之，箭头函数虽然更加简短，但是没有 `this、arguments、prototype`，而且不能使用 new，想改变 this 指向也不行，`yield` 关键字通常也不能在箭头函数中使用（除非是嵌套在允许使用的函数内）。因此，箭头函数也不能用作函数生成器。
+
 ## 各自适应的场景
+
+- 箭头函数
+  
+  我们说引入箭头函数有两个方面的作用：更简短的函数并且不绑定 `this`，所以它更适合于无复杂逻辑或者说无副作用的纯函数场景下，比如 map、filter、forEach 的回调函数中。因为没有 this、arguments等，所以不适合定义对象的方法，比如说对象字面量方法、构造器方法等。也更适用于那些本来需要匿名函数的地方。
+- 普通函数
+  
+  普通函数的应用场景，基本能覆盖整个应用程序。
+
+  
 
