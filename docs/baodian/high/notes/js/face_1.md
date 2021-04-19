@@ -124,8 +124,6 @@ console.log(4, new Date() - date)
 在 V8 7.0 版本之前 ，数组长度小于10时， Array.prototype.sort() 使用的是插入排序，否则用快速排序。
 在 V8 引擎 7.0 版本之后，采用了一种混合排序的算法：TimSort
 
-## CSS 盒模型有哪些？
-
 ## 清除 float
 
 ## css 实现居中对齐的方式
