@@ -124,8 +124,6 @@ console.log(4, new Date() - date)
 
 ## 清除 float
 
-## css 实现居中对齐的方式
-
 ## 伪数组怎么转为数组
 
 ## 什么是作用域？

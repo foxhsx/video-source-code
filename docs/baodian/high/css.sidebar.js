@@ -4,6 +4,7 @@ module.exports = [
     collapsable: true,
     children: [
       '/baodian/high/notes/css/box_model',
+      '/baodian/high/notes/css/center',
     ]
   }
 ]
