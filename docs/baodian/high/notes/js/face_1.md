@@ -141,3 +141,7 @@ console.log(4, new Date() - date)
 ## webpack 打包原理
 
 ## 如何判断url中只包含qq.com
+
+## es6 及 es6+ 的能力集，你最常用的，这其中最有用的，都解决了什么问题？
+
+## 实现颜色转换 'rgb(255, 255, 255)' -> '#FFFFFF' 

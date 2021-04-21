@@ -10,6 +10,13 @@ module.exports = [
         children: [
           '/frontend/css/notes/Layout/center'
         ]
+      },
+      {
+        title: '基础概念',
+        collapsable: true,
+        children: [
+          '/frontend/css/notes/Base/streaming'
+        ]
       }
     ]
   }
