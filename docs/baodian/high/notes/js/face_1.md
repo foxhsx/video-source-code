@@ -59,15 +59,6 @@ categories:
 
 ## 如何判断两个变量相等
 
-## 闭包 JS基础 编程题 (字节) 
-
-```js
-var foo = function(...args) {} // 要求实现函数体
-var f1 = foo(1,2,3); f1.getValue(); // 6 输出是参数的和
-var f2 = foo(1)(2,3); f2.getValue(); // 6
-var f3 = foo(1)(2)(3)(4); f3.getValue(); // 10
-```
-
 ## weakMap 和 Map 的区别，weakMap 原理，为什么能被 GC？如何干扰 GC ？
 
 ## 从页面 A 打开一个新页面 B，B 页面关闭（包括意外崩溃），如何通知 A 页面？
@@ -145,3 +136,4 @@ console.log(4, new Date() - date)
 ## es6 及 es6+ 的能力集，你最常用的，这其中最有用的，都解决了什么问题？
 
 ## 实现颜色转换 'rgb(255, 255, 255)' -> '#FFFFFF' 
+## var、let、const 有什么区别
