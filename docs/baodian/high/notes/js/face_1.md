@@ -119,8 +119,6 @@ console.log(4, new Date() - date)
 
 ## 什么是作用域？
 
-## call、apply 和 bind 区别
-
 ## 精度计算
 
 ## 大数据相加数据溢出

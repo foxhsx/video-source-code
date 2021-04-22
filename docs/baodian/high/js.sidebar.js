@@ -22,6 +22,8 @@ module.exports = [
       '/baodian/high/notes/js/typescript',
       '/baodian/high/notes/js/function',
       '/baodian/high/notes/js/lexical_environment',
+      '/baodian/high/notes/js/closure_code',
+      '/baodian/high/notes/js/change_thisdirection',
     ]
   }
 ]
