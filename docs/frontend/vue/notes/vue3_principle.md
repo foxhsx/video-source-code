@@ -234,5 +234,9 @@ Vue 的作者尤雨溪解释是因为性能问题。
 
 ## Vue3.x 响应式原理
 
+Vue3.x 版本跟 Vue2.x 相比，变化还是蛮大的，首先从响应式实现原理上就做出了很大的改变，Vue2.x 是使用 `Object.defineProperty` 来实现的响应式，而 Vue3.x 则是使用 `Proxy` 代理来实现的响应式。
+
+从代码结构上 Vue3.x 的响应式代码是放在 `./packages/reactivity` 目录里的，而且其本身都是使用 TypeScript 进行重构的。
+
 ## 实现迷你Vue3
 
