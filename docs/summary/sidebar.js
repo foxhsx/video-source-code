@@ -27,6 +27,7 @@ module.exports = [
       '/summary/notes/axios_form',
       '/summary/notes/cryptojs_sign',
       '/summary/notes/eslint',
+      '/summary/notes/tailwind',
     ]
   }
 ]
