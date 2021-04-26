@@ -169,3 +169,5 @@ console.log(4, new Date() - date)
 ## JS 的运行机制？内存机制？异步编程？
 
 ## 前端安全
+
+## Promise.allSettled 的作用，如何自己实现 Promise.allSettled
