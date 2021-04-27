@@ -294,3 +294,236 @@ console.log(state); // get 会执行 5 次
 reflect 可以用于获取目标对象的行为，它与 Object 类似，但是更容易进行读，为操作对象提供了一种更优雅的方式。
 
 Vue3.0 的 vdom 是全部通过 Typescript 重写了的，其核心思想：跳过静态节点，只处理动态节点，弱化了类的概念，通过组合 API 提供代码的可复用性和可维护性。
+
+**那么我们如何实现一个迷你版的 Vue 呢**？
+
+这里我们借助 Vue3.0 的 reactivity 响应式库来写一个迷你版 Vue。
+
+首先我们要知道在 Vue3.0 里响应式库已经被抽离出来，可以单独去用了，所以我们新建一个项目叫 `mini-vue`：
+
+```sh
+mkdir mini-vue
+
+cd mini-vue
+
+npm init -y
+
+touch index.html
+```
+
+然后在 `index.html` 中引入入口文件 `main.js`，因为是使用 `script` 标签的方式去引入的，所以这里需要加上 `type=module`:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div id="app"></div>
+  <!-- 因为在浏览器端，所以 script 要加上 type -->
+  <script type="module" src="./main.js"></script>
+</body>
+</html>
+```
+
+然后我们去创建 `main.js`:
+
+```js
+import { createApp } from './core/index.js';
+import { App } from './App.js'
+
+createApp(App).mount(document.querySelector('#app'))
+```
+
+这里面呢，`core` 目录是存放核心代码的地方，而 `App` 相信大家都很熟悉了，就是我们的根组件。
+
+在说这个核心目录之前，我们先看看如何简单粗暴的利用 `reactivity` 库实现数据驱动视图的效果。
+
+```js
+// 首先安装vue3.0 里响应式库
+npm i @vue/reactivity -S
+
+// 然后引入浏览器的 js 文件
+import { ref, reactive, effect } from './node_modules/@vue/reactivity/dist/reactivity.esm-browser.js'
+
+// 计算属性 computed 底层就是 effect => 作用就是响应式的收集和触发依赖
+
+const a = ref(10)
+let b;
+
+// 一进来就执行
+effect(() => {
+  b = a.value + 10;
+  console.log(b);
+})
+a.value = 20;
+```
+
+::: tip 代码执行解析
+
+1. 在浏览器控制台会先出来一个 20，因为一进函数就执行了 effect
+2. 然后出来一个 30，当a.value 的值改变之后，再次调用 effect 函数
+
+**那它是什么时候触发的依赖收集呢**？
+
+当代码一进来执行到 effect 里的 a.value 的时候，会触发 get 操作，从而将 effect 里的匿名函数收集进来，作为 a 的响应式数据的依赖存在。
+
+**那么什么时候去触发依赖呢**？
+
+当我们的 a 的值发生改变的时候，会触发 set 操作，从而遍历之前所有收集到的依赖，也就是之前在 effect 里的匿名函数，并且执行。
+
+:::
+
+我们来看一段更加直观的：
+
+```js
+const str = ref(10);
+
+window.a = str;
+const view = () => {
+
+  // 最核心的点  update
+
+  const div = document.createElement('div');
+  div.textContent = 'hello mini-vue ->' + str.value;
+  document.querySelector('#app').append(div);
+}
+
+effect(() => {
+  view()
+})
+```
+
+当我们刚进页面的时候，会发现页面上展示了 `hello mini-vue -> 10`，而当我们打开控制台，并且输入 `a++` 之后，就会发现，页面会新增一个 `div` 标签进去，显示 `hello mini-vue -> 11` ，重复操作，会重复添加标签，并且后面的值递增。
+
+不过这里有一个很明显的问题，假如此时我们在添加一个 p 标签进去，如下：
+
+```js
+document.querySelector('#app').textContent = '';
+const div = document.createElement('div');
+const p = document.createElement('p');
+div.textContent = 'hello mini-vue ->' + context.a.value;
+p.textContent = 'ppp';
+div.appendChild(p);
+document.querySelector('#app').append(div);
+```
+
+那么当改变 `a.value` 的时候，里面的 `p` 标签页会一起被改变，这就会有一个性能问题，而为了解决这个性能问题，就需要引入 DIFF 算法。
+
+还有一个问题就是我们总不能每次都调 `effect` 这个方法吧，在 render 函数中我们要做的就是返回一个视图出去即可。
+
+所以总结起来，这里要解决的两个问题：
+
+1. 公共流程我们需要抽离出来
+2. 引入 DIFF 算法
+
+那么解决第一个问题的方法，就是前面提到的核心代码目录 `core`。
+
+1. `index.js`
+
+   ```js
+   // 入口文件，这个文件的主要作用是将功能代码抽离到一起，方便在项目中引用，不做任何逻辑处理
+   export * from '../node_modules/@vue/reactivity/dist/reactivity.esm-browser.js'
+   // 引入并导出 createApp
+   export * from './createApp.js'
+   // 引入并导出 h
+   export * from './h.js'
+   ```
+
+2. `createApp.js`
+
+   ```js
+   // 这个文件主要实现 vue 中 createApp 的方法
+   import { effect } from './index.js'
+   import { mountElment } from './renderer.js'
+   
+   export function createApp(rootComponent) {  // 传进来一个根组件
+     // app
+     return {
+       mount(rootContainer) {  // 直接传进来一个根容器进来
+         
+         const result = rootComponent.setup()
+   
+         effect(() => {
+           // reset
+           rootContainer.textContent = '';
+           // const element = rootComponent.render(result);
+           
+           // 当我们返回虚拟节点树的时候，就不能使用上面的表达式了
+           const subTree = rootComponent.render(result);
+           console.log(subTree);
+   
+           // 而这里我们必须将其转换为一个真实的节点才能添加到浏览器当中去
+           mountElment(subTree, rootContainer)
+   
+           // rootContainer.append(element);
+         })
+       },
+     }
+   }
+   ```
+
+3. `h.js`
+
+   ```js
+   // create vnode
+   
+   /**
+    * 我们先来分析一下怎么创建一个 DOM
+    * 1. 首先我们需要一个标签 tag
+    * 2. 还可能需要设置各种属性 props
+    * 3. 还要有内容 children
+    */
+   
+   export function h (tag, props, children) {
+     return {
+       tag,
+       props,
+       children
+     }
+   }
+   ```
+
+4. `renderer.js`
+
+   ```js
+   /**
+    * 将虚拟节点转换为真实 DOM
+    * @param {虚拟节点} vnode 
+    * @param {添加到哪个容器} container 
+    */
+   export function mountElment (vnode, container) {
+     // 如何把一个虚拟节点转换成真实节点
+   }
+   ```
+
+那么此时在 `App.js` 中：
+
+```js
+import { ref, h } from './core/index.js'
+
+export const App = {
+  render(context) {
+    // const div = document.createElement('div');
+    // div.textContent = 'hello mini-vue ->' + context.a.value;
+    // return div
+
+    // 使用 h 函数
+    return h('div', { id: 1 }, 'hello mini-vue ->' + context.a.value)
+  },
+  setup() {
+    const a = ref(10);
+    window.a = a;
+    return {
+      a
+    }
+  }
+}
+```
+
+
+
