@@ -437,30 +437,40 @@ document.querySelector('#app').append(div);
 2. `createApp.js`
 
    ```js
-   // 这个文件主要实现 vue 中 createApp 的方法
    import { effect } from './index.js'
-   import { mountElment } from './renderer.js'
+   import { mountElment, diff } from './renderer.js'
    
    export function createApp(rootComponent) {  // 传进来一个根组件
      // app
      return {
        mount(rootContainer) {  // 直接传进来一个根容器进来
          
-         const result = rootComponent.setup()
+         const result = rootComponent.setup();
+         let isMounted = false;
+         let prevSubTree;
    
          effect(() => {
-           // reset
-           rootContainer.textContent = '';
-           // const element = rootComponent.render(result);
-           
-           // 当我们返回虚拟节点树的时候，就不能使用上面的表达式了
-           const subTree = rootComponent.render(result);
-           console.log(subTree);
-   
-           // 而这里我们必须将其转换为一个真实的节点才能添加到浏览器当中去
-           mountElment(subTree, rootContainer)
-   
-           // rootContainer.append(element);
+           // init
+           if (!isMounted) {
+             isMounted = true;
+             // reset
+             rootContainer.textContent = '';
+             // const element = rootComponent.render(result);
+             
+             // 当我们返回虚拟节点树的时候，就不能使用上面的表达式了
+             const subTree = rootComponent.render(result);
+             // 而这里我们必须将其转换为一个真实的节点才能添加到浏览器当中去
+             mountElment(subTree, rootContainer)
+             // 之前的节点数据
+             prevSubTree = subTree;
+           } else {
+             // 得到新的虚拟节点树
+             const subTree = rootComponent.render(result);
+             console.log(prevSubTree, subTree);
+             // 使用 diff 算法进行对比
+             diff(prevSubTree, subTree);
+             prevSubTree = subTree;
+           }
          })
        },
      }
@@ -492,12 +502,160 @@ document.querySelector('#app').append(div);
 
    ```js
    /**
+    * 创建DOM节点
+    * @param {节点标签} type 
+    * @returns 节点
+    */
+   function createElement(type) {
+     return document.createElement(type);
+   }
+   
+   /**
+    * 设置属性
+    * @param {节点} el Object
+    * @param {节点 key} key 
+    * @param {*} prevValue 
+    * @param {*} nextValue 
+    */
+   function patchProp(el, key, prevValue, nextValue) {
+     if (nextValue === null) {
+       el.removeAttribute(key);
+   
+       return;
+     }
+     el.setAttribute(key, nextValue);
+   }
+   
+   function createTextNode(text) {
+     return document.createTextNode(text);
+   }
+   
+   function insert(el, parent) {
+     parent.append(el);
+   }
+   
+   function remove(el, parent) {
+     parent.removeChild(el);
+   }
+   
+   /**
     * 将虚拟节点转换为真实 DOM
     * @param {虚拟节点} vnode 
     * @param {添加到哪个容器} container 
     */
    export function mountElment (vnode, container) {
      // 如何把一个虚拟节点转换成真实节点
+     // vnode ->  element
+     const { tag, props, children } = vnode;
+     // tag
+     const element = (vnode.el = createElement(tag));
+     // props
+     Object.keys(props).forEach((key) => {
+       patchProp(element, key, null, props[key]);
+     });
+     // children
+     // string | array
+     if (typeof children === 'string') {
+       const textNode = createTextNode(children);
+       insert(textNode, element);
+     } else if (Array.isArray(children)) {
+       // 此时的根节点是 element
+       children.forEach((v) => mountElment(v, element));
+     }
+   
+     // insert
+     insert(element, container);
+   }
+   
+   export function diff(n1, n2) {
+     // tag
+     if (n1.tag !== n2.tag) {
+       // 替换挂载的 DOM
+       n1.el.replaceWith(n2.el = createElement(n2.tag))
+     } else {
+       // 如何 tag 一致，那我们就对比 props 和 children
+       // props
+       const el = (n2.el = n1.el);
+       const { props: oldProps } = n1;
+       const { props: newProps } = n2;
+       // 1. old { id: 1 }  new { id }
+       Object.keys(newProps).forEach((key) => {
+         if (oldProps[key] !== newProps[key]) {
+           // 两个值不一样，需要更新
+           patchProp(el, key, oldProps[key], newProps[key]);
+         }
+       });
+       // 2. old { id, class } new { id }
+       Object.keys(oldProps).forEach((key) => {
+         if (!(key in newProps)) {
+           patchProp(el, key, oldProps[key], null)
+         }
+       })
+       // children
+       // 在真实源码中是特别复杂的，今天实现的是一个暴力算法
+       const { children: oldChildren } = n1;
+       const { children: newChildren } = n2;
+       // 1. newChildren -> string -> oldChildren (string | array)
+   
+       if (typeof newChildren === "string") {
+         if (typeof oldChildren === "string") {
+           if (newChildren !== oldChildren) {
+             el.textContent = newChildren;
+           }
+         } else if (Array.isArray(oldChildren)) {
+           el.textContent = newChildren;
+         }
+       }
+       // 2. newChildren -> array ->  oldChildren (string | array)
+       else if (Array.isArray(newChildren)) {
+         if (typeof oldChildren === "string") {
+           // reset
+           el.textContent = ''
+           newChildren.forEach((v) => mountElment(v, el));
+         } else if (Array.isArray(oldChildren)) {
+           /**
+            * 1. 依次对比
+            * new [a,b,c]
+            * old [a,b,e]
+            * 2. old 多出来的就需要删除
+            * new [a,b]
+            * old [a,b,c]
+            * 3. new 多出来的就需要创建
+            * new [a,b,c]
+            * old [a,b]
+            * 
+            * 缺点--只是改变顺序，但是还是会重新创建，所以并不是最优的
+            * old [a,b,c]
+            * new [a,c,b]
+            */
+   
+           // 求出公共长度
+           const length = Math.min(newChildren.length, oldChildren.length);
+           for(let i=0;i < length;i++) {
+             const oldChild = oldChildren[i];
+             const newChild = newChildren[i];
+             diff(oldChild, newChild);
+           }
+   
+           // old -> new ->  remove
+           if (oldChildren.length > length) {
+             for (let i = length; i < oldChildren.length; i++) {
+               const vnode = oldChildren[i];
+               remove(vnode.el, el);
+             }
+           }
+   
+           // new -> old ->  add
+           if (newChildren.length > length) {
+             for (let i = length; i < newChildren.length; i++) {
+               mountElment(newChildren[i], el);
+             }
+           }
+         }
+       }
+   
+     }
+     
    }
    ```
 
@@ -513,7 +671,7 @@ export const App = {
     // return div
 
     // 使用 h 函数
-    return h('div', { id: 1 }, 'hello mini-vue ->' + context.a.value)
+    return h('div', { id: 1+context.a.value }, [h('p', {}, 'heihei'+context.a.value), h('p', {}, 'haha')])
   },
   setup() {
     const a = ref(10);
@@ -524,6 +682,4 @@ export const App = {
   }
 }
 ```
-
-
 
