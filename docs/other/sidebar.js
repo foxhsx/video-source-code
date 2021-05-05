@@ -4,7 +4,8 @@ module.exports = [
     collapsable: true,
     path: '/other/',
     children: [
-      '/other/notes/XianFangsuo'
+      '/other/notes/XianFangsuo',
+      '/other/notes/wechat',
     ]
   }
 ]

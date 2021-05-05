@@ -28,6 +28,7 @@ module.exports = [
       '/summary/notes/cryptojs_sign',
       '/summary/notes/eslint',
       '/summary/notes/tailwind',
+      '/summary/notes/better_coding',
     ]
   }
 ]
