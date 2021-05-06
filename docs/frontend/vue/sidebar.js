@@ -12,6 +12,7 @@ module.exports = [
       '/frontend/vue/notes/vue3_composition',
       '/frontend/vue/notes/canvas_animate',
       '/frontend/vue/notes/vue3_principle',
+      '/frontend/vue/notes/vue_utils',
     ]
   }
 ]
