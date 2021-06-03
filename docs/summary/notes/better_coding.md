@@ -5,6 +5,7 @@ tags:
  - 干货
 categories:
  - front
+
 ---
 
 - 写代码应该如何思考
@@ -92,3 +93,153 @@ const observe = {
 
 接下来以实现一个越转越快的转盘为例。
 
+```js
+// 一个越转越慢的转盘
+// 1. 使用函数式编程
+
+// 2. 获取到最终奖品（点击抽奖之后就已经得到结果，动画只是一个过渡效果），开始转动，每转动一圈减慢速度再转一圈，最后一圈停在对应的奖励
+// 3. 结果模块，动画效果模块，转动控制模块
+// 4. 使用 setInterval() 异步函数来控制动画，html 结构生成模块
+
+var observe = {
+	// 存放注册的事件
+	message: {},
+	// 注册监听
+	register: function (type, fn) {
+		this.message[type] = fn;
+	},
+	fire: function (fire) {
+		this.message[fire]();
+	}
+}
+
+/**
+ * 先全部写成空方法 
+ * 然后可以用建造者模式来组织他们，也可以直接使用函数式来进行
+ */ 
+
+/**
+ * html 结构生成模块
+ * @param {目标容器} target 
+ */
+let domArr = [];  // 用于缓存生成的 div
+function htmlInit(target) {
+	let num = 9;
+	for (let i = 0; i <= num; i++) {
+		let div = document.createElement('div');
+		div.setAttribute('class', 'item');
+		div.innerHTML = i;
+		target.appendChild(div);
+		domArr.push(div);
+	}
+}
+
+// 结果模块
+function getFinal() {
+	// 40 是一个基础的转动圈数，这里先生成随机数，然后转动40圈加随机数后停下
+	let num = Math.random() * 10 + 40;
+	return Math.floor(num);
+}
+
+/**
+ * 动画效果模块
+ * @param {动画设置} moveConfig 
+ */
+function mover(moveConfig) {
+	let nowIn = 0;  // 当前停留在第几个，初始化的时候默认是第一个，下标为 0
+	let removeIn = 9;  // 假如这里的选中效果是一个蓝色的边框，那么我们在当前选中效果的基础上，要删除上一个边框的效果
+
+	// 设置定时器动画
+	let timer = setInterval(() => {
+		if (nowIn != 0) {
+			removeIn = nowIn - 1;
+		}
+		domArr[removeIn].setAttribute('class', 'item');
+		domArr[nowIn].setAttribute('class', 'item item-on');
+		nowIn++;
+
+		// 如果 nowIn 等于传进来的动画次数，比如 10 个
+		if (nowIn === moveConfig.moveTime) {
+			// 停止动画
+			clearInterval(timer);
+			// 如果传进来的动画次数等于10的时候，表示转完了一整圈
+			if (moveConfig.moveTime === 10) {
+				// 这是触发一个转下一圈的事件
+				observe.fire('finish');
+			}
+		}
+		// 传入转动的速度
+	}, moveConfig.speed)
+}
+
+// 动画控制模块
+function moveControll() {
+	// 先调用结果模块，拿到最终停留在哪里
+	let final = getFinal();
+	// 计算出我们需要转动多少圈
+	let circle = Math.floor(final/10, 0);
+	// 已经跑了几圈了
+	let runCircle = 0; // 默认为0
+	// 最终停在第几格
+	let stopNum = final%10;
+	// 定义初始速度为 200 ms
+	let speed = 200;
+
+	// 初始转动第一圈
+	mover({
+		moveTime: 10,
+		speed
+	})
+
+	// 注册事件
+	/**
+	 * finish 事件，已经完成一圈后下一圈应该怎么转
+	 */
+	observe.register('finish', function () {
+		// 当前一圈，要转多少次
+		let time = 0;
+		// 速度递增
+		speed -= 50;
+		// 转完一圈后 runCircle 递增
+		runCircle++;
+
+		// 如果当前的圈数小于等于基础圈数，则转动的次数为10
+		if (runCircle <= circle) {
+			time = 10;
+		} else {
+			time = stopNum;
+		}
+
+		// 调用动画
+		mover({
+			moveTime: time,
+			speed
+		})
+	})
+}
+
+function begin() {
+	htmlInit(document.getElementById('app'));
+	moveControll();
+}
+
+window.begin = begin();
+```
+
+这样就简单的实现了一个转盘抽奖的效果，麻雀虽小，五脏俱全，该有的方法和设计模式都涉及到了。我们使用观察者模式将两个模块之间进行了关联，从而达到了我们期望的效果。
+
+接下来我们再来看看**职责链模式**。
+
+## 职责链模式
+
+首先我们说职责链模式是什么？
+
+- 目的：让功能的完成以消息按链条传递来处理
+- 使用方式：线性处理，同步模块
+- 适用处：功能不涉及到异步操作
+
+例如，一个水果罐头加工厂加工水果罐头，那么它就有这样一个流水线：切水果 -》 消毒 -》 装瓶 -》 装箱。
+
+典型的例子就是 axios 的拦截器，这是一个很典型的职责链模式，它的响应拦截器和请求拦截器是可以随意添加和扩展的。
+
+接下来我们看一个使用职责链模式做的格式验证的功能。

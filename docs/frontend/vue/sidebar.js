@@ -13,6 +13,8 @@ module.exports = [
       '/frontend/vue/notes/canvas_animate',
       '/frontend/vue/notes/vue3_principle',
       '/frontend/vue/notes/vue_utils',
+      '/frontend/vue/notes/vue2_source1',
+      '/frontend/vue/notes/vue2_source2',
     ]
   }
 ]
