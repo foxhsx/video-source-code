@@ -6,6 +6,7 @@ tags:
 categories:
  - front
 
+
 ---
 
 - 写代码应该如何思考
@@ -243,3 +244,66 @@ window.begin = begin();
 典型的例子就是 axios 的拦截器，这是一个很典型的职责链模式，它的响应拦截器和请求拦截器是可以随意添加和扩展的。
 
 接下来我们看一个使用职责链模式做的格式验证的功能。
+
+```js
+// 事件绑定模块 -》 前端验证模块 =》 后端验证模块
+let input = document.createElement('input');
+
+input.onblur = function () {
+    let value = input.value;
+    let arr = [frontValidate, back];
+
+	async function test() {
+		let result = value;  // 初始化 result
+
+		// 依次执行 arr 里面的每一个方法，然后把上一个方法的结果给到下一个
+		// 这里借鉴了 axios 里的拦截器的思路
+		while(arr.length > 0) {
+			result = await arr.shift()(result);
+		}
+	}
+
+	test().then(res => {
+
+	})
+}
+
+// 前端验证
+function frontValidate (result) {
+	return result
+}
+
+// 后端验证
+function back(result) {
+	return result
+}
+```
+
+使用职责链模式，可以在产品开发的同时，避免需求变更带来的些许火焰，比如在原有的基础上再拓展一个功能之类的，上述例子里，就可以再添加一个方法进去，并不会影响到别的代码。
+
+## 质量调优
+
+1. 健壮性
+2. 代码简洁性
+3. DRY原则
+
+首先对于代码的健壮性来说，其实可以简称为许许多多的 `if...else...`，比如我们之前说的转盘有个方法：
+
+```js
+// 动画控制模块
+function moveControll() {
+	// 先调用结果模块，拿到最终停留在哪里
+	let final = getFinal();
+    // 这里就需要有一个健壮性判断，final 应该是一个数字
+    if (typeof final !== 'number') {
+    	throw new Error('final is not a number')   
+    }
+	// ...
+}
+```
+
+这样做的作用就是可以避免一些低级错误的出现，并且可以快速定位问题原因和位置。
+
+其次就是代码简洁性，比如代码中的`if..else`过多时，我们可以使用策略模式、状态模式；而当重复对象很多的时候，我们还可以用到享元模式。
+
+最后一个就是 DRY 原则—— don`t repeat yourself。
