@@ -29,6 +29,7 @@ module.exports = [
       '/summary/notes/eslint',
       '/summary/notes/tailwind',
       '/summary/notes/better_coding',
+      '/summary/notes/js_center',
     ]
   }
 ]
