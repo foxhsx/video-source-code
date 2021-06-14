@@ -15,6 +15,7 @@ module.exports = [
       '/frontend/react/notes/react_life',
       '/frontend/react/notes/classVSfunction',
       '/frontend/react/notes/how_reactComponent',
+      '/frontend/react/notes/setState',
     ]
   }
 ]
