@@ -148,3 +148,9 @@ const Block = (props) => <div style={{ color: 'red' }}></div>
 - 承接在优势后，可以再谈一下自己对 React 优化的看法、对虚拟 DOM 的看法；
 - 向自己主导过得 React 项目上引导，谈一谈 React 相关的工程架构与设计模式。
 
+## 延伸
+
+项目中 React 的使用方式：
+
+- script 标签直接引入；
+- 脚手架方式；

@@ -24,6 +24,7 @@ module.exports = [
       '/baodian/high/notes/js/lexical_environment',
       '/baodian/high/notes/js/closure_code',
       '/baodian/high/notes/js/change_thisdirection',
+      '/baodian/high/notes/js/bubbling_capture',
     ]
   }
 ]

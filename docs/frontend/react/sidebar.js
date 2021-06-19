@@ -16,6 +16,8 @@ module.exports = [
       '/frontend/react/notes/classVSfunction',
       '/frontend/react/notes/how_reactComponent',
       '/frontend/react/notes/setState',
+      '/frontend/react/notes/react_hooks',
+      '/frontend/react/notes/hook_useState',
     ]
   }
 ]

@@ -38,3 +38,5 @@ categories:
   <p>这里可以是任何内容，比如 &lt;p&gt;,
   &lt;table&gt;，一切由你作主！</p>
 </div> 
+
+HTML 元素加上 id 以后，这个 id 就自动称为一个全局变量挂载到 window 上了。所以我们平时可以在 JavaScript 中直接使用 id，省略掉 getElementById 的写法。

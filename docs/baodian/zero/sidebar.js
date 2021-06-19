@@ -19,6 +19,7 @@ module.exports = [
           '/baodian/zero/JavaScript/notes/Coding_7',
           '/baodian/zero/JavaScript/notes/Coding_8',
           '/baodian/zero/JavaScript/notes/Coding_9',
+          '/baodian/zero/JavaScript/notes/array_push',
         ]
       }
     ]
