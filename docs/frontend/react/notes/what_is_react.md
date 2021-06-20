@@ -154,3 +154,81 @@ const Block = (props) => <div style={{ color: 'red' }}></div>
 
 - script 标签直接引入；
 - 脚手架方式；
+
+首先我们来说一下 script 标签直接引入的方式：
+
+```html
+<div id="box"></div>
+
+<script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+
+<script>
+	// 创建 react 对象
+    let el = React.createElement(
+      'p',
+      { className: 'danger', key: 3 },
+      'hello world'
+    )
+    
+    // 使用 ReactDOM 进行元素渲染
+    ReactDOM.render(ele, box);
+</script>
+```
+
+最终在页面上展示出来的就是一个 div，内容是 hello world。
+
+那如果我们需要实现一个有嵌套层级的 html 元素需要怎么去实现呢？比如实现下面的层级：
+
+```html
+<div class="login">
+    <p class="danger">hello world</p>
+    <label for="uname">用户名</label>
+    <input type="text" id="uname">
+</div>
+```
+
+那这个时候其实我们可以由官网文档得知，React.createElement 这个 API 其实最后一个参数 children，也可以是一个数组或者说是一个节点，不仅限于文字。
+
+```js
+React.createElement(
+  type,
+  [props],
+  [...children]  // 内容、子元素
+)
+```
+
+所以要实现这个 html 的结构，我们可以按照下列的代码进行实现：
+
+```js
+// 创建虚拟DOM
+let el = React.createElement(
+    'p',
+    { className: 'danger', key: 3 },
+    'hello world'
+)
+
+let label = React.createElement(
+    'label',
+    { htmlFor: 'uname', key: 0 },
+    '用户名'
+)
+
+let input = React.createElement(
+    'input',
+    { type: 'text', id: 'uname', key: 1 }
+)
+
+let ele = React.createElement(
+    'div',
+    { className: 'login', key: 2 },
+    [
+        el, label, input
+    ]
+)
+
+// 使用 ReactDOM 进行元素渲染
+ReactDOM.render(ele, box)
+```
+
+以上就是使用 script 标签元素直接引入 react 库的方式。

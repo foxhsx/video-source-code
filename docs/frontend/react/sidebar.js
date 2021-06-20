@@ -18,6 +18,8 @@ module.exports = [
       '/frontend/react/notes/setState',
       '/frontend/react/notes/react_hooks',
       '/frontend/react/notes/hook_useState',
+      '/frontend/react/notes/react_jsx_basics',
+      '/frontend/react/notes/bind_data',
     ]
   }
 ]
