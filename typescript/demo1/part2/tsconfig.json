@@ -8,5 +8,26 @@
    *    默认值： ["node_modules", "bower_components", "json_packages"]
   */
   "include": ["./**/*"],
-  "exclude": ["./**/index.ts"]
+  // "exclude": ["./**/index.ts"]
+  "compilerOptions": {
+    // 指定编译后的版本
+    "target": "ES6",
+    // module 指定要使用的模块化规范
+    "module": "amd",
+    // lib 用来指定项目中要使用到的库，一般不进行设置，只用默认值即可
+    // 指定编译后文件所在的目录
+    "outDir": "./dist",
+    // 指定输出的文件，将代码合并成一个文件
+    "outFile": "./dist/app.js",
+    // 是否对 JS 文件进行编译，默认是 false
+    "allowJs": false,
+    // 检查 JS 代码是否符合当前代码规范
+    "checkJs": false,
+    // 是否移除注释
+    "removeComments": false,
+    // 不生成编译后的文件
+    "noEmit": false,
+    // 当检查有错误时就不生成编译文件
+    "noEmitOnError": false
+  }
 }
