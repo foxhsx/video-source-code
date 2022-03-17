@@ -25,9 +25,19 @@
     "checkJs": false,
     // 是否移除注释
     "removeComments": false,
+    // 所有严格检查的总开关
+    "strict": false,
     // 不生成编译后的文件
     "noEmit": false,
     // 当检查有错误时就不生成编译文件
-    "noEmitOnError": false
+    "noEmitOnError": false,
+    // 用来设置编译后的文件是否使用严格模式，默认 false
+    "alwaysStrict": false,
+    // 是否允许隐式的 any 类型出现，默认为 false 允许
+    "noImplicitAny": false,
+    // 是否允许不明确类型的 this
+    "noImplicitThis": false,
+    // 严格检查空值
+    "strictNullChecks": false,
   }
 }
