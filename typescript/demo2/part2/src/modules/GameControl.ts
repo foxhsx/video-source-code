@@ -7,7 +7,7 @@ class GameControl {
   food: Food;
   scorePanel: ScorePanel;
   direction: string = 'Right'
-  isLive = false
+  isLive = true
   constructor() {
     this.snake = new Snake()
     this.food = new Food()
@@ -66,10 +66,30 @@ class GameControl {
         break;
     }
 
-    this.snake.X = X
-    this.snake.Y = Y
+    this.checkEat(X, Y)
+
+    // 直接捕获 Snake 里的错误
+    try {
+      this.snake.X = X
+      this.snake.Y = Y
+    } catch(e) {
+      alert(e)
+      this.isLive = false
+    }
 
     this.isLive && setTimeout(this.run.bind(this), 300 - (this.scorePanel.level - 1) * 30)
+  }
+
+  // 吃到食物
+  checkEat(x: number, y: number) {
+    if (x === this.food.X && y === this.food.Y) {
+      // 食物方法重置
+      this.food.change()
+      // 分数增加
+      this.scorePanel.addScore()
+      // 增加一节
+      this.snake.addBody()
+    }
   }
 }
 

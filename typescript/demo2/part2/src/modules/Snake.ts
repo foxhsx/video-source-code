@@ -19,9 +19,19 @@ class Snake {
 
   // 设置蛇头的坐标
   set X(value: number) {
+    if (this.X === value) return
+    // 是否撞墙
+    if (value < 0 || value > 290) {
+      throw new Error('撞墙了！')
+    }
     this.head.style.left = value + 'px'
   }
   set Y(value: number) {
+    if (this.Y === value) return
+    // 是否撞墙
+    if (value < 0 || value > 290) {
+      throw new Error('撞墙了！')
+    }
     this.head.style.top = value + 'px'
   }
 
