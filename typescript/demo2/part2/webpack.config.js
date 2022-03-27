@@ -9,6 +9,7 @@ module.exports = {
     filename: "bundle.js",
     environment: {
       arrowFunction: false, // 设置 webpack 打包时不使用剪头函数
+      const: false, // 打包后不使用 const 语法
     }
   },
   module: {
